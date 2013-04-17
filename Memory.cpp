@@ -22,33 +22,38 @@ Memory::Memory(void)
     AllocateBlock();
 }
 
-void Memory::AllocateBlock()
+MemoryBlockInfo* Memory::AllocateBlock()
 {
     // Get memory from the OS
     void* memory = OSAllocateBlock();
     
     // Setup the memory block
-    memory->mPageSize = OSPageSize();
-    memory->mFreeSpace = memory->mPageSize - (sizeof(OSMemoryPageInfo) + sizeof(MemoryBlockInfo));
-    memory->mLargestFreeBlock = (MemoryBlockInfo*)(memory + 1);
-    memory->mNextPage = 0;
-    memory->mPrevPage = 0;
-    
-    // Setup an initial allocation block
-    memory->mLargestFreeBlock->mBlockSize = memory->mFreeSpace;
-    memory->mLargestFreeBlock->mAllocationLine = -1;
+	MemoryBlockInfo* block = (MemoryBlockInfo*)memory;
+	if( block )
+	{
+		block->mMarker = 0xAAAAAAAA;
+		block->mLastContiguous = 0;
+		block->mSpace = OSBlockSize() - sizeof(MemoryBlockInfo);
+		block->mAllocationLine = 0;
+		block->mAllocationFile = (const char*)0xFFFFFFFF;
+		block->mNextBlock = 0;
 
-    // Add to the free list
-    if( mFreePages )
-    {
-        OSMemoryPageInfo* lastFreePage = mFreePages;
-        while( lastFreePage->mNextPage )
-            lastFreePage = lastFreePage->mNextPage;
-        lastFreePage->mNextPage = memory;
-        memory->mPrevPage = lastFreePage;
-    }
-    else
-        mFreePages = memory;    
+		// Add this block to the end of the free list
+		if( mFreeBlocks )
+		{
+			MemoryBlockInfo* free = mFreeBlocks;
+			while( free->mNextBlock )
+				free = free->mNextBlock;
+			free->mNextBlock = block;
+			block->mPrevBlock = free;
+		}
+		else
+		{
+			mFreeBlocks = block;
+			block->mPrevBlock = 0;
+		}
+	}
+	return block;
 }
 
 void* Memory::Allocate(uint size, const char* file, int line)
@@ -59,54 +64,61 @@ void* Memory::Allocate(uint size, const char* file, int line)
 
     // Find a free block large enough for this allocation
     MemoryBlockInfo* freeBlock = mFreeBlocks;
-    void* memory = 0;
-    while( freeBlock && memory == 0)
+    while( freeBlock )
     {
         if( freeBlock->mSpace >= size )
         {
             // This block has enough space for this allocation
-            freeBlock->mAllocationFile = file;
-            freeBlock->mAllocationLine = line;            
-
-            // Remove the block from the free list
-            if( freeBlock->mPrevBlock )
-                freeBlock->mPrevBlock->mNextBlock = freeBlock->mNextBlock;
-            if( freeBlock->mNextBlock )
-                freeBlock->mNextBlock->mPrevBlock = freeBlock->mPrevBlock;
-
-            // Check to see if we need to create a remainder free space block
-            uint extraSpace = freeBlock->mSpace - size;
-            if( extraSpace > sizeof(MemoryBlockInfo) )
-            {
-                // Create a new block for the extra space
-                MemoryBlockInfo* extraBlock = (MemoryBlockInfo*)((char*)freeBlock + sizeof(MemoryBlockInfo) + size);
-                extraBlock->mSpace = extraSpace - sizeof(MemoryBlockInfo);
-                extraBlock->mLastContiguous = size + sizeof(MemoryBlockInfo);
-                extraBlock->mMarker = freeBlock->mMarker;
-                freeBlock->mMarker |= 1;
-
-                // Add the new extra space block to the free list
-                extraBlock->mNextBlock = mFreeBlocks;
-                mFreeBlocks->mPrevBlock = extraBlock;
-                mFreeBlocks = extraBlock;
-            }
-            
-            // Add this block to the allocated list
-            freeBlock->mNextBlock = mAllocatedBlocks;
-            if( mAllocatedBlocks )
-                mAllocatedBlocks->mPrevBlock = freeBlock;
-            mAllocatedBlocks = freeBlock;
+            break;
         }
 
         freeBlock = freeBlock->mNextBlock;
     }
+
+	if( !freeBlock )
+	{
+		// Didn't find one large enough, allocate a new one
+		freeBlock = AllocateBlock();
+	}
+	ASSERT(freeBlock);
+
+	freeBlock->mAllocationFile = file;
+    freeBlock->mAllocationLine = line;            
+
+    // Remove the block from the free list
+    if( freeBlock->mPrevBlock )
+        freeBlock->mPrevBlock->mNextBlock = freeBlock->mNextBlock;
+    if( freeBlock->mNextBlock )
+        freeBlock->mNextBlock->mPrevBlock = freeBlock->mPrevBlock;
+
+    // Check to see if we need to create a remainder free space block
+    uint extraSpace = freeBlock->mSpace - size;
+    if( extraSpace > sizeof(MemoryBlockInfo) )
+    {
+        // Create a new block for the extra space
+        MemoryBlockInfo* extraBlock = (MemoryBlockInfo*)((char*)freeBlock + sizeof(MemoryBlockInfo) + size);
+        extraBlock->mSpace = extraSpace - sizeof(MemoryBlockInfo);
+        extraBlock->mLastContiguous = size + sizeof(MemoryBlockInfo);
+        extraBlock->mMarker = freeBlock->mMarker;
+
+        // Add the new extra space block to the free list
+        extraBlock->mNextBlock = mFreeBlocks;
+        mFreeBlocks->mPrevBlock = extraBlock;
+        mFreeBlocks = extraBlock;
+    }
+    
+    // Add this block to the allocated list
+    freeBlock->mNextBlock = mAllocatedBlocks;
+    if( mAllocatedBlocks )
+        mAllocatedBlocks->mPrevBlock = freeBlock;
+    mAllocatedBlocks = freeBlock;
 }
 
 void Memory::Free(void* memory)
 {
     // Get the block header
     MemoryBlockInfo* block = (MemoryBlockInfo*)memory - 1;
-    bool validBlock = (block->mMarker & 0xFFFFFFFE) == 0xAAAAAAAA;
+    bool validBlock = (block->mMarker & 0xFFFFFFFF) == 0xAAAAAAAA;
     ASSERT(validBlock);
     if( validBlock )
     {
@@ -117,9 +129,58 @@ void Memory::Free(void* memory)
             block->mNextBlock->mPrevBlock = block->mPrevBlock;
 
         // Attempt to merge up
+		if( block->mLastContiguous )
+		{
+			MemoryBlockInfo* prevBlock = (MemoryBlockInfo*)((char*)block - block->mLastContiguous);
+			if( (block->mMarker & 0xFFFFFFFF) == 0xAAAAAAAA && prevBlock->mAllocationLine >= 0 )
+			{
+				// Previous block is free, we can merge up
+				prevBlock->mSpace += sizeof(MemoryBlockInfo) + block->mSpace;
+				block = prevBlock;
+			}
+		}
 
         // Attempt to merge down
+		MemoryBlockInfo* nextBlock = (MemoryBlockInfo*)((char*)block + sizeof(MemoryBlockInfo) + block->mSpace);
+		if( (block->mMarker & 0xFFFFFFFF) == 0xAAAAAAAA && nextBlock->mAllocationLine >= 0 )
+		{
+			// Both blocks free, remove next block from the free list
+            if( nextBlock->mPrevBlock )
+                nextBlock->mPrevBlock->mNextBlock = nextBlock->mNextBlock;
+            if( nextBlock->mNextBlock )
+                nextBlock->mNextBlock->mPrevBlock = nextBlock->mPrevBlock;
+
+			// Merge blocks
+			nextBlock->mSpace += sizeof(MemoryBlockInfo) + nextBlock->mSpace;
+		}
+		block->mAllocationLine = 0;
 
         // Add to the free list
+		MemoryBlockInfo* free = mFreeBlocks;
+		bool inList = false;
+		while( free )
+		{
+			if( free == block )
+			{
+				inList = true;
+				break;
+			}
+			free = free->mNextBlock;
+		}
+		if( !inList )
+		{
+			free = mFreeBlocks;
+			while( free )
+			{
+				if( block->mSpace <= free->mSpace )
+				{
+					block->mNextBlock = free;
+					block->mPrevBlock = free->mPrevBlock;
+					free->mPrevBlock = block;
+					break;
+				}
+				free = free->mNextBlock;
+			}
+		}
     }
 }

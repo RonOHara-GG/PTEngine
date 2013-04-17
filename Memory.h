@@ -26,7 +26,7 @@ private:
     void* OSAllocateBlock();
     uint OSBlockSize();
 
-    void AllocateBlock();
+    MemoryBlockInfo* AllocateBlock();
 
 private:
     MemoryBlockInfo*    mAllocatedBlocks;
