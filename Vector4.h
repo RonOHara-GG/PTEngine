@@ -14,7 +14,7 @@ public:
     float mY;
     float mZ;
     float mW;
-}
+};
 
 #include "Vector4_Default.h"
 

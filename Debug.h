@@ -2,7 +2,7 @@
 #define _DEBUG_H_
 
 #define DEBUG_IsDebuggerPresent             (false)
-#define DEBUG_Break                         ()
+#define DEBUG_Break                         
 
 
 #endif //_DEBUG_H_

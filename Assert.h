@@ -15,7 +15,7 @@ namespace Assert
 
     extern bool sAssertsIgnored;
 
-    bool AreAssertsIgnored()        { return sAssertsIgnored; }
+    inline bool AreAssertsIgnored()        { return sAssertsIgnored; }
     
     eAssertChoice ShowDialog();
 };

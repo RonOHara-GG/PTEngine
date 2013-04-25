@@ -2,13 +2,12 @@
 #include "Memory.h"
 
 // Instantiate static memory object
-static bool sMemoryInitialized = false;
 static Memory instance;
+Memory* Memory::sInstance = 0;
 
 Memory::Memory(void)
 {
-    ASSERT(!sMemoryInitialized);
-    sMemoryInitialized = true;
+    ASSERT(sInstance == 0);
     sInstance = this;
 
     mAllocatedBlocks = 0;

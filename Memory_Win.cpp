@@ -1,5 +1,7 @@
 #include "PTEngine.h"
 #include "Memory.h"
+#undef malloc
+#undef free
 
 #include <Windows.h>
 

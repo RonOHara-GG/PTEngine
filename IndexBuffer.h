@@ -1,7 +1,7 @@
 #ifndef _INDEX_BUFFER_H_
 #define _INDEX_BUFFER_H_
 
-#include "Renderer.h";
+#include "Renderer.h"
 
 class IndexBuffer : public OwnedObject
 {

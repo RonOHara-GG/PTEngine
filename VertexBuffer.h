@@ -1,7 +1,8 @@
 #ifndef _VERTEX_BUFFER_H_
 #define _VERTEX_BUFFER_H_
 
-#include "Renderer.h";
+#include "Vector3.h"
+#include "Vector4.h"
 
 #define VF_POSITION     0x00000001
 #define VF_NORMAL       0x00000002

@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTEngine", "PTEngine.vcxproj", "{072AAFF2-6CAA-4952-8D3F-AEC797AEECB7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PTTest", "PTTest\PTTest.vcxproj", "{96692C37-87C0-419E-B7A9-F86D576B501F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{072AAFF2-6CAA-4952-8D3F-AEC797AEECB7} = {072AAFF2-6CAA-4952-8D3F-AEC797AEECB7}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

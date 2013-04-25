@@ -1,5 +1,8 @@
+#include "PTEngine.h"
 #include "Shapes.h"
 #include "Mesh.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 static Mesh* sCube = 0;
 

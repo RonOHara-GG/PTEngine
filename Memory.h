@@ -37,8 +37,27 @@ public:
     static Memory*   sInstance;
 };
 
-#define malloc(size)    Memory::sInstance->Allocate(size, __FILE_, __LINE__)
+#define malloc(size)    Memory::sInstance->Allocate(size, __FILE__, __LINE__)
 #define free(pointer)   Memory::sInstance->Free(pointer)
 
+inline void* operator new(size_t size)
+{
+    return malloc(size);
+}
+
+inline void operator delete(void* memory)
+{
+    free(memory);
+}
+
+inline void* operator new[](size_t size)
+{
+    return malloc(size);
+}
+
+inline void operator delete[](void* memory)
+{
+    free(memory);
+}
 #endif // _MEMORY_H_
 

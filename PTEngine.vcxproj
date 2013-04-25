@@ -13,10 +13,15 @@
   <ItemGroup>
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Box.h" />
+    <ClInclude Include="Debug.h" />
+    <ClInclude Include="DynamicArray.h" />
+    <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="OwnedObject.h" />
+    <ClInclude Include="PTEngine.h" />
     <ClInclude Include="RGBA.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Renderer.h" />
@@ -27,9 +32,11 @@
     <ClInclude Include="Vector3_Default.h" />
     <ClInclude Include="Vector4.h" />
     <ClInclude Include="Vector4_Default.h" />
+    <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assert.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Memory_Win.cpp" />
@@ -39,6 +46,7 @@
     <ClCompile Include="RGBA.cpp" />
     <ClCompile Include="Shapes.cpp" />
     <ClCompile Include="Submesh.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{072AAFF2-6CAA-4952-8D3F-AEC797AEECB7}</ProjectGuid>

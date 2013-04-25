@@ -29,28 +29,28 @@ public:
     static const RGBA   Blue;
 };
 
-RGBA::RGBA()
+inline RGBA::RGBA()
 {
     Set(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-RGBA::RGBA(unsigned int red, unsigned int green, unsigned int blue, unsigned int alpha, unsigned int scale)
+inline RGBA::RGBA(unsigned int red, unsigned int green, unsigned int blue, unsigned int alpha, unsigned int scale)
 {
     Set(red, green, blue, alpha, scale);
 }
 
-RGBA::RGBA(float red, float green, float blue, float alpha)
+inline RGBA::RGBA(float red, float green, float blue, float alpha)
 {
     Set(red, green, blue, alpha);
 }
 
-void RGBA::Set(unsigned int red, unsigned int green, unsigned int blue, unsigned int alpha, unsigned int scale)
+inline void RGBA::Set(unsigned int red, unsigned int green, unsigned int blue, unsigned int alpha, unsigned int scale)
 {
     float fScale = 1.0f / (float)scale;
     Set((float)red * fScale, (float)green * fScale, (float)blue * fScale, (float)alpha * fScale);
 }
 
-void RGBA::Set(float red, float green, float blue, float alpha)
+inline void RGBA::Set(float red, float green, float blue, float alpha)
 {
     mRed = CLAMP(red, 0, 1);
     mGreen = CLAMP(green, 0, 1);

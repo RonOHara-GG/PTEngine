@@ -2,6 +2,7 @@
 #define _SHAPES_H_
 
 #include "Renderer.h"
+#include "Material.h"
 
 namespace Shapes
 {

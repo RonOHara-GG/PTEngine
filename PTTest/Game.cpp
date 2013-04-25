@@ -4,6 +4,7 @@
 #include "..\PTEngine.h"
 #include "..\Renderer.h"
 #include "..\RendererManager.h"
+#include "..\Shapes.h"
 
 Renderer* gRenderer = 0;
 Matrix4x4 gViewMatrix;
@@ -11,10 +12,10 @@ Matrix4x4 gProjectionMatrix;
 
 void InitGame(HWND hWnd)
 {
-    RendererManager::RegisterRenderer("Renderer_Direct3D.dll");
-    RendererManager::RegisterRenderer("Renderer_OpenGL.dll");
+    RendererManager::GetInstance()->RegisterRenderer("Renderer_Direct3D.dll");
+    RendererManager::GetInstance()->RegisterRenderer("Renderer_OpenGL.dll");
 
-    gRenderer = RendererManager::GetRenderer("Direct3D");
+    gRenderer = RendererManager::GetInstance()->GetRenderer("Direct3D");
     gRenderer->Init(hWnd);
 
 

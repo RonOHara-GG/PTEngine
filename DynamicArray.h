@@ -128,33 +128,33 @@ inline void* DynamicArrayBase::operator[](int index)
 // Dynamic Array
 //////////////////////////////////////////////////////////////
 template<class T>
-inline DynamicArray::DynamicArray() : DynamicArrayBase(sizeof(T))
+inline DynamicArray<T>::DynamicArray() : DynamicArrayBase(sizeof(T))
 {
 }
 
 template<class T>
-inline int DynamicArray::Add(T& item)
+inline int DynamicArray<T>::Add(T& item)
 {
     return DynamicArrayBase::Add(&item);
 }
 
 template<class T>
-inline void DynamicArray::Set(int index, T& item)
+inline void DynamicArray<T>::Set(int index, T& item)
 {
     DynamicArrayBase::Set(index, &item);
 }
 
 template<class T>
-inline T& DynamicArray::Get(int index)
+inline T& DynamicArray<T>::Get(int index)
 {
     void* itemPtr = DynamicArrayBase::Get(index);
     return (T&)itemPtr;
 }
 
 template<class T>
-inline T& DynamicArray::operator[](int index)
+inline T& DynamicArray<T>::operator[](int index)
 {
-    return (T&)DynamicArrayBase::operator[index];
+    return *((T*)DynamicArrayBase::operator[](index));
 }
 
 #endif // _DYNAMIC_ARRAY_H_

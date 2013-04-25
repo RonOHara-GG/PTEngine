@@ -13,7 +13,7 @@ public:
     float mX;
     float mY;
     float mZ;
-}
+};
 
 #include "Vector3_Default.h"
 

@@ -3,6 +3,8 @@
 
 #include "Renderer.h"
 
+class Material;
+
 #define MAX_VERTEX_BUFFERS  4
 
 class Submesh : public OwnedObject
@@ -11,7 +13,7 @@ public:
     Submesh(void);
     virtual ~Submesh(void);
 
-    bool Create(Renderer* renderer, int vertexCount, uint vertexComponents, int primitiveCount, Renderer::ePrimitiveType primType, bool sixteenBitIndices = true, bool dynamicVB = false);
+    bool Create(class Renderer* renderer, int vertexCount, uint vertexComponents, int primitiveCount, Renderer::ePrimitiveType primType, bool sixteenBitIndices = true, bool dynamicVB = false);
 
     VertexBuffer* GetVertexBuffer(int index = 0)    { return mVertexBuffers[index]; }
     void SetVertexBuffer(int index, VertexBuffer* vertexBuffer);

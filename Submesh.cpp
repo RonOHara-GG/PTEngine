@@ -1,5 +1,8 @@
 #include "PTEngine.h"
 #include "Submesh.h"
+#include "IndexBuffer.h"
+#include "VertexBuffer.h"
+#include "Material.h"
 
 
 Submesh::Submesh(void)
@@ -37,10 +40,16 @@ bool Submesh::Create(Renderer* renderer, int vertexCount, unsigned int vertexCom
 {
     // Create vertex buffer
     VertexBuffer* vb = renderer->CreateVertexBuffer(vertexCount, vertexComponents, dynamicVB);
+    if( !vb )
+        return false;
     SetVertexBuffer(0, vb);
 
     // Create index buffer
     mIndexBuffer = renderer->CreateIndexBuffer(Renderer::GetPrimitiveIndexCount(primitiveCount, primType), sixteenBitIndices);
+    if( !mIndexBuffer )
+        return false;
+
+    return true;
 }
 
 void Submesh::SetVertexBuffer(int index, VertexBuffer* buffer)

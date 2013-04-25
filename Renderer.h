@@ -4,8 +4,10 @@
 #include "Box.h"
 #include "RGBA.h"
 #include "Matrix4x4.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
+
+class Mesh;
+class VertexBuffer;
+class IndexBuffer;
 
 class Renderer
 {
@@ -22,7 +24,7 @@ public:
     Renderer();
     virtual ~Renderer();
 
-    virtual bool Init() = 0;
+    virtual bool Init(void* window) = 0;
     virtual void Shutdown() = 0;
 
     virtual void BeginFrame() = 0;
@@ -39,6 +41,8 @@ public:
 
     virtual VertexBuffer* CreateVertexBuffer(int vertexCount, uint vertexComponents, bool dynamic = false) = 0;
     virtual IndexBuffer* CreateIndexBuffer(int indexCount, bool sixteenBit = true) = 0;
+
+    virtual void DrawMesh(Mesh* mesh);
     
 
     static int GetPrimitiveIndexCount(int primitiveCount, ePrimitiveType primitiveType);

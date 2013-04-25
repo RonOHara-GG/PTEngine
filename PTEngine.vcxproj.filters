@@ -17,6 +17,12 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Assert.h" />
+    <ClInclude Include="PTEngine.h" />
+    <ClInclude Include="OwnedObject.h" />
+    <ClInclude Include="Debug.h" />
+    <ClInclude Include="DynamicArray.h" />
+    <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp" />
@@ -29,5 +35,7 @@
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Memory_Win.cpp" />
     <ClCompile Include="Assert.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
 </Project>

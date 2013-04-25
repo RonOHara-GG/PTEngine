@@ -3,7 +3,9 @@
 
 class OwnedObject
 {
+protected:
     OwnedObject()   { mOwner = 0; }
+
 public:
     void* GetOwner()                { return mOwner; }
     void SetOwner(void* owner)      { mOwner = owner; }

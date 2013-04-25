@@ -10,7 +10,7 @@ int Renderer::GetPrimitiveIndexCount(int primitiveCount, ePrimitiveType primitiv
             count = primitiveCount * 3;
             break;
         case ePT_TriangleStrip:
-            count = 3 + ((primitiveCount - 1);
+            count = 3 + (primitiveCount - 1);
             break;
         case ePT_TriangleFan:
             count = 1 + primitiveCount;
