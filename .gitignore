@@ -1,2 +1,8 @@
 *.sdf
 *.suo
+*.user
+ipch
+Debug
+PTTest/Debug
+Renderer_Direct3D/Debug
+Renderer_OpenGL/Debug
