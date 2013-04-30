@@ -44,9 +44,9 @@ void DoFrame()
             //gRenderers[i]->SetViewMatrix(gViewMatrix);
             //gRenderers[i]->SetProjectionMatrix(gProjectionMatrix);
 
-
-            RGBA ClearColor(1.0f, 0.5f, 0, 1.0f);
-            gRenderers[i]->Clear(true, ClearColor);
+			
+            RGBA clearColor(0.5f, 0.5f, 0.5f, 1.0f);
+            gRenderers[i]->Clear(true, clearColor);
 
             gRenderers[i]->BeginFrame();
 

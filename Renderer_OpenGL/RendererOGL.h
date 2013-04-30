@@ -34,6 +34,9 @@ public:
     virtual void DrawMesh(Mesh* mesh);
 
 private:
+	HWND	mWindow;
+	HDC		mDeviceContext;
+	HGLRC	mRenderContext;
 };
 
 #endif // _RENDERER_OGL_H_
