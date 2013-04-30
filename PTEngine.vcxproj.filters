@@ -5,7 +5,6 @@
     <ClInclude Include="Box.h" />
     <ClInclude Include="Vector3_Default.h" />
     <ClInclude Include="Vector3.h" />
-    <ClInclude Include="RendererManager.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="RGBA.h" />
     <ClInclude Include="Vector4.h" />
@@ -23,10 +22,12 @@
     <ClInclude Include="DynamicArray.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="PluginManager.h" />
+    <ClInclude Include="Plugin.h" />
+    <ClInclude Include="DynamicLibrary.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="RendererManager.cpp" />
     <ClCompile Include="RGBA.cpp" />
     <ClCompile Include="Shapes.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -35,7 +36,9 @@
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Memory_Win.cpp" />
     <ClCompile Include="Assert.cpp" />
-    <ClCompile Include="IndexBuffer.cpp" />
-    <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="PluginManager.cpp" />
+    <ClCompile Include="Plugin.cpp" />
+    <ClCompile Include="DynamicLibrary.cpp" />
+    <ClCompile Include="DynamicLibrary_Win.cpp" />
   </ItemGroup>
 </Project>

@@ -1,12 +1,11 @@
 // PTTest.cpp : Defines the entry point for the application.
 //
-
 #include "stdafx.h"
 #include "PTTest.h"
 
 #define MAX_LOADSTRING 100
 
-extern void InitGame(HWND hWnd);
+extern void InitGame(HWND hWndTop, HWND hWndBottom);
 extern void ShutdownGame();
 extern void DoFrame();
 
@@ -15,6 +14,8 @@ HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 HWND hMainWnd;
+HWND hTopWindow;
+HWND hBottomWindow;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -47,7 +48,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PTTEST));
 
-    InitGame(hMainWnd);
+    InitGame(hTopWindow, hBottomWindow);
 
 	// Main message loop:
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -92,8 +93,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    hInst = hInstance; // Store instance handle in our global variable
 
-   hMainWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+   int renderHeight = 480;
+   int renderWidth = (int)((16.0f / 9.0f) * (float)renderHeight);
+
+   int screenX = GetSystemMetrics(SM_CXSCREEN);
+
+   int width = renderWidth + 20;
+   int xCtr = (screenX / 2) - (width / 2);
+
+   hMainWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, xCtr, 0, width, (renderHeight * 2) + 45, NULL, NULL, hInstance, NULL);
+
+   hTopWindow = CreateWindow(szWindowClass, szTitle, WS_CHILD | WS_BORDER, 2, 2, renderWidth, renderHeight, hMainWnd, NULL, hInstance, NULL);
+   hBottomWindow = CreateWindow(szWindowClass, szTitle, WS_CHILD | WS_BORDER, 2, 4 + renderHeight, renderWidth, renderHeight, hMainWnd, NULL, hInstance, NULL);
 
    if (!hMainWnd)
    {
@@ -101,6 +112,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    }
 
    ShowWindow(hMainWnd, nCmdShow);
+   ShowWindow(hTopWindow, nCmdShow);
+   ShowWindow(hBottomWindow, nCmdShow);
    UpdateWindow(hMainWnd);
 
    return TRUE;
@@ -140,3 +153,4 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
+

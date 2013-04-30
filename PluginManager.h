@@ -2,7 +2,7 @@
 #define _PLUGIN_MANAGER_H_
 
 class Renderer;
-class DynamicLibrary;
+class Plugin;
 
 class PluginManager
 {
@@ -15,7 +15,7 @@ public:
     Renderer* GetRenderer(const char* rendererName);
 
 private:
-    DynamicArray<DynamicLibrary*> mPlugins;
+    DynamicArray<Plugin*> mPlugins;
 
 public:
     static PluginManager*  sInstance;

@@ -1,8 +1,8 @@
 #include "PTEngine.h"
 #include "Assert.h"
 
-
-bool Assert::sAssertsIgnored = false;
+static Assert sAssert;
+Assert* Assert::sInstance = &sAssert;
 
 Assert::eAssertChoice Assert::ShowDialog()
 {

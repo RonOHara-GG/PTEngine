@@ -111,6 +111,8 @@ void* Memory::Allocate(uint size, const char* file, int line)
     if( mAllocatedBlocks )
         mAllocatedBlocks->mPrevBlock = freeBlock;
     mAllocatedBlocks = freeBlock;
+
+    return freeBlock + 1;
 }
 
 void Memory::Free(void* memory)
@@ -131,7 +133,7 @@ void Memory::Free(void* memory)
 		if( block->mLastContiguous )
 		{
 			MemoryBlockInfo* prevBlock = (MemoryBlockInfo*)((char*)block - block->mLastContiguous);
-			if( (block->mMarker & 0xFFFFFFFF) == 0xAAAAAAAA && prevBlock->mAllocationLine >= 0 )
+			if( (block->mMarker & 0xFFFFFFFF) == 0xAAAAAAAA && prevBlock->mAllocationLine == 0 )
 			{
 				// Previous block is free, we can merge up
 				prevBlock->mSpace += sizeof(MemoryBlockInfo) + block->mSpace;
@@ -141,7 +143,7 @@ void Memory::Free(void* memory)
 
         // Attempt to merge down
 		MemoryBlockInfo* nextBlock = (MemoryBlockInfo*)((char*)block + sizeof(MemoryBlockInfo) + block->mSpace);
-		if( (block->mMarker & 0xFFFFFFFF) == 0xAAAAAAAA && nextBlock->mAllocationLine >= 0 )
+		if( (block->mMarker & 0xFFFFFFFF) == 0xAAAAAAAA && nextBlock->mAllocationLine == 0 )
 		{
 			// Both blocks free, remove next block from the free list
             if( nextBlock->mPrevBlock )

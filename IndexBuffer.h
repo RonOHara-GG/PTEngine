@@ -6,13 +6,12 @@
 class IndexBuffer : public OwnedObject
 {
 public:
-    IndexBuffer(void);
-    ~IndexBuffer(void);
+    virtual ~IndexBuffer(void) {}
 
-    void Lock();
-    void Unlock();
+    virtual void Lock() = 0;
+    virtual void Unlock() = 0;
     
-    void Set(int index, uint vertex);
+    virtual void Set(int index, uint vertex) = 0;
 
 protected:
 

@@ -1,5 +1,6 @@
 #include "PTEngine.h"
 #include "PluginManager.h"
+#include "Plugin.h"
 
 static PluginManager sPluginManager;
 PluginManager* PluginManager::sInstance = 0;
@@ -17,15 +18,11 @@ PluginManager::~PluginManager(void)
 
 bool PluginManager::LoadPlugin(const char* pluginFile)
 {
-    DynamicLibrary* plugin = new DynamicLibrary();
-    if( plugin->Load(pluginFile) )
-    {
+    Plugin* plugin = Plugin::LoadPlugin(pluginFile);
+    if( plugin )
         mPlugins.Add(plugin);
-    }
-    else
-    {
-        delete plugin;
-    }
+
+    return (plugin != 0);
 }
 
 Renderer* PluginManager::GetRenderer(const char* rendererName)
@@ -34,6 +31,10 @@ Renderer* PluginManager::GetRenderer(const char* rendererName)
     {
         if( mPlugins[i] )
         {
+            Renderer* renderer = mPlugins[i]->FindRenderer(rendererName);
+            if( renderer )
+                return renderer;
         }
     }
+    return 0;
 }

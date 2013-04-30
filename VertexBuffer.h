@@ -12,27 +12,26 @@
 class VertexBuffer : public OwnedObject
 {
 public:
-    VertexBuffer(void);
-    ~VertexBuffer(void);
+    virtual ~VertexBuffer(void) {}
 
-    void Lock();
-    void Unlock();
+    virtual void Lock() = 0;
+    virtual void Unlock() = 0;
     
-    void SetPosition(int vertexIndex, float x, float y, float z);
-    void SetPosition(int vertexIndex, float x, float y, float z, float w);
-    void SetPosition(int vertexIndex, Vector3 position);
-    void SetPosition(int vertexIndex, Vector4 position);
+    virtual void SetPosition(int vertexIndex, float x, float y, float z) = 0;
+    virtual void SetPosition(int vertexIndex, float x, float y, float z, float w) = 0;
+    virtual void SetPosition(int vertexIndex, Vector3 position) = 0;
+    virtual void SetPosition(int vertexIndex, Vector4 position) = 0;
     
-    void SetNormal(int vertexIndex, float x, float y, float z);
-    void SetNormal(int vertexIndex, float x, float y, float z, float w);
-    void SetNormal(int vertexIndex, Vector3 normal);
-    void SetNormal(int vertexIndex, Vector4 normal);
+    virtual void SetNormal(int vertexIndex, float x, float y, float z) = 0;
+    virtual void SetNormal(int vertexIndex, float x, float y, float z, float w) = 0;
+    virtual void SetNormal(int vertexIndex, Vector3 normal) = 0;
+    virtual void SetNormal(int vertexIndex, Vector4 normal) = 0;
     
-    void SetUV(int uvChannel, int vertexIndex, float u, float v);
-    void SetUV(int uvChannel, int vertexIndex, float u, float v, float s);
-    void SetUV(int uvChannel, int vertexIndex, float u, float v, float s, float t);
-    void SetUV(int uvChannel, int vertexIndex, Vector3 uv);
-    void SetUV(int uvChannel, int vertexIndex, Vector4 uv);
+    virtual void SetUV(int uvChannel, int vertexIndex, float u, float v) = 0;
+    virtual void SetUV(int uvChannel, int vertexIndex, float u, float v, float s) = 0;
+    virtual void SetUV(int uvChannel, int vertexIndex, float u, float v, float s, float t) = 0;
+    virtual void SetUV(int uvChannel, int vertexIndex, Vector3 uv) = 0;
+    virtual void SetUV(int uvChannel, int vertexIndex, Vector4 uv) = 0;
     
 protected:
 

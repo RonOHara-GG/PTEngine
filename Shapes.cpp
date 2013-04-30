@@ -4,7 +4,9 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
+Material* Shapes::sDefaultMaterial = 0;
 static Mesh* sCube = 0;
+
 
 void Shapes::InitCube(Renderer* renderer)
 {

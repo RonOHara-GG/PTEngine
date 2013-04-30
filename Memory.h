@@ -18,8 +18,8 @@ class Memory
 public:
     Memory(void);
 
-    void* Allocate(uint size, const char* file, int line);
-    void Free(void* memory);
+    virtual void* Allocate(uint size, const char* file, int line);
+    virtual void Free(void* memory);
 
 private:
     void OSInit();
@@ -40,7 +40,7 @@ public:
 #define malloc(size)    Memory::sInstance->Allocate(size, __FILE__, __LINE__)
 #define free(pointer)   Memory::sInstance->Free(pointer)
 
-inline void* operator new(size_t size)
+__forceinline void* operator new(size_t size)
 {
     return malloc(size);
 }
@@ -50,7 +50,7 @@ inline void operator delete(void* memory)
     free(memory);
 }
 
-inline void* operator new[](size_t size)
+__forceinline void* operator new[](size_t size)
 {
     return malloc(size);
 }

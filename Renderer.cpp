@@ -1,6 +1,7 @@
 #include "PTEngine.h"
 #include "Renderer.h"
 
+
 int Renderer::GetPrimitiveIndexCount(int primitiveCount, ePrimitiveType primitiveType)
 {
     int count = 0;

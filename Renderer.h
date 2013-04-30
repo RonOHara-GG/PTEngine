@@ -21,10 +21,9 @@ public:
     };
 
 public:
-    Renderer();
-    virtual ~Renderer();
+    virtual ~Renderer() {};
 
-    virtual bool Init(void* window) = 0;
+    virtual bool Init(void* window, bool fullScreen) = 0;
     virtual void Shutdown() = 0;
 
     virtual void BeginFrame() = 0;
@@ -42,7 +41,7 @@ public:
     virtual VertexBuffer* CreateVertexBuffer(int vertexCount, uint vertexComponents, bool dynamic = false) = 0;
     virtual IndexBuffer* CreateIndexBuffer(int indexCount, bool sixteenBit = true) = 0;
 
-    virtual void DrawMesh(Mesh* mesh);
+    virtual void DrawMesh(Mesh* mesh) = 0;
     
 
     static int GetPrimitiveIndexCount(int primitiveCount, ePrimitiveType primitiveType);
