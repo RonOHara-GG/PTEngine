@@ -2,9 +2,8 @@
 #include "RendererD3D.h"
 #include "VertexBufferD3D9.h"
 
-VertexBufferD3D9::VertexBufferD3D9(Renderer* renderer, IDirect3DVertexBuffer9* vb, const VertexFormat& format)
+VertexBufferD3D9::VertexBufferD3D9(IDirect3DVertexBuffer9* vb, const VertexFormat& format)
 {
-    mRenderer = renderer;
     mVB = vb;
     mLockedData = 0;
     mVertexFormat = format;
