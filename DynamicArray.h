@@ -11,13 +11,14 @@ public:
 
     void Reserve(int reserveCount);
     void Clear();
-    int Count()                 { return mCount; }
+    int Count() const               { return mCount; }
 
 protected:
     int Add(void* item);
-    void* Get(int index);
+    void* Get(int index) const;
     void Set(int index, void* item);
     void* operator[](int index);    
+    void* operator[](int index) const;
 
 private:
     void Allocate(int count);
@@ -40,6 +41,7 @@ public:
     T& Get(int index);
     void Set(int index, T& item);
     T& operator[](int index);
+    const T& operator[](int index) const;
 };
 
 
@@ -110,7 +112,7 @@ inline void DynamicArrayBase::Set(int index, void* item)
     memcpy(itemPtr, item, mItemSize);
 }
 
-inline void* DynamicArrayBase::Get(int index)
+inline void* DynamicArrayBase::Get(int index) const
 {
     ASSERT(index >= mCount && index < mAllocatedCount && index >= 0);
 
@@ -119,6 +121,11 @@ inline void* DynamicArrayBase::Get(int index)
 }
 
 inline void* DynamicArrayBase::operator[](int index)
+{
+    return Get(index);
+}
+
+inline void* DynamicArrayBase::operator[](int index) const
 {
     return Get(index);
 }
@@ -153,6 +160,12 @@ inline T& DynamicArray<T>::Get(int index)
 
 template<class T>
 inline T& DynamicArray<T>::operator[](int index)
+{
+    return *((T*)DynamicArrayBase::operator[](index));
+}
+
+template<class T>
+inline const T& DynamicArray<T>::operator[](int index) const
 {
     return *((T*)DynamicArrayBase::operator[](index));
 }

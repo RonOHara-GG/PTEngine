@@ -8,6 +8,7 @@
 class Mesh;
 class VertexBuffer;
 class IndexBuffer;
+class VertexFormat;
 
 class Renderer
 {
@@ -38,7 +39,7 @@ public:
 
     virtual void Clear(bool bClearColor = true, const RGBA& color = RGBA::Black, bool bClearDepth = true, float depthValue = 1.0f, bool bClearStencil = false, unsigned int stencilValue = 0) = 0;
 
-    virtual VertexBuffer* CreateVertexBuffer(int vertexCount, uint vertexComponents, bool dynamic = false) = 0;
+    virtual VertexBuffer* CreateVertexBuffer(int vertexCount, const VertexFormat& format, bool dynamic = false) = 0;
     virtual IndexBuffer* CreateIndexBuffer(int indexCount, bool sixteenBit = true) = 0;
 
     virtual void DrawMesh(Mesh* mesh) = 0;

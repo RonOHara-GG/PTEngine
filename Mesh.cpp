@@ -1,9 +1,11 @@
 #include "PTEngine.h"
 #include "Mesh.h"
+#include "Submesh.h"
 
 
-Mesh::Mesh(void)
+Mesh::Mesh(Renderer* renderer)
 {
+    mRenderer = renderer;
 }
 
 Mesh::~Mesh(void)
@@ -16,4 +18,8 @@ Mesh::~Mesh(void)
         }
     }
     mSubmeshes.Clear();
+}
+
+void Mesh::Draw(const Matrix4x4& ltw)
+{
 }

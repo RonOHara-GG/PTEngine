@@ -80,10 +80,12 @@
   <ItemGroup>
     <ClInclude Include="RD3DPlugin.h" />
     <ClInclude Include="RendererD3D.h" />
+    <ClInclude Include="VertexBufferD3D9.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RD3DPlugin.cpp" />
     <ClCompile Include="RendererD3D.cpp" />
+    <ClCompile Include="VertexBufferD3D9.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

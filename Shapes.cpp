@@ -1,19 +1,24 @@
 #include "PTEngine.h"
 #include "Shapes.h"
 #include "Mesh.h"
+#include "Submesh.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
 Material* Shapes::sDefaultMaterial = 0;
-static Mesh* sCube = 0;
 
-
-void Shapes::InitCube(Renderer* renderer)
+Mesh* Shapes::CreateCube(Renderer* renderer)
 {
-    sCube = new Mesh();
+    Mesh* mesh = new Mesh(renderer);
     Submesh* submesh = new Submesh();
-    sCube->AddSubmesh(submesh);
-    submesh->Create(renderer, 24, VF_POSITION | VF_NORMAL | VF_UV0, 12, Renderer::ePT_Triangles);
+    mesh->AddSubmesh(submesh);
+
+    VertexFormat format;
+    int positionOffset = format.Add(VertexFormat::eVU_Position, VertexFormat::eVET_Float3);
+    int normalOffset = format.Add(VertexFormat::eVU_Normal, VertexFormat::eVET_Float3);
+    int uvOffset = format.Add(VertexFormat::eVU_UV0, VertexFormat::eVET_Float2);
+
+    submesh->Create(renderer, 24, format, 12, Renderer::ePT_Triangles);
     VertexBuffer* verts = submesh->GetVertexBuffer();
     IndexBuffer* indices = submesh->GetIndexBuffer();
 
@@ -33,25 +38,30 @@ void Shapes::InitCube(Renderer* renderer)
     Vector3 top(0.0f, 1.0f, 0.0f);
     Vector3 bottom(0.0f, -1.0f, 0.0f);
 
+    Vector3 uv00(0.0f, 0.0f, 0.0f);
+    Vector3 uv01(0.0f, 0.0f, 0.0f);
+    Vector3 uv10(1.0f, 0.0f, 0.0f);
+    Vector3 uv11(1.0f, 1.0f, 0.0f);
+
     int vertex = 0;
     int index = 0;
     // Front
-    verts->SetPosition(vertex, topLeftFront);
-    verts->SetNormal(vertex, front);
-    verts->SetUV(0, vertex++, 0.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topLeftFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &front);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv00);
 
-    verts->SetPosition(vertex, topRightFront);
-    verts->SetNormal(vertex, front);
-    verts->SetUV(0, vertex++, 1.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topRightFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &front);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv10);
 
-    verts->SetPosition(vertex, bottomRightFront);
-    verts->SetNormal(vertex, front);
-    verts->SetUV(0, vertex++, 1.0f, 1.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomRightFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &front);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv11);
 
-    verts->SetPosition(vertex, bottomLeftFront);
-    verts->SetNormal(vertex, front);
-    verts->SetUV(0, vertex++, 0.0f, 1.0f);
-    
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomLeftFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &front);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv01);
+        
     indices->Set(index++, vertex - 4);
     indices->Set(index++, vertex - 3);
     indices->Set(index++, vertex - 1);
@@ -60,21 +70,21 @@ void Shapes::InitCube(Renderer* renderer)
     indices->Set(index++, vertex - 2);
 
     // Right
-    verts->SetPosition(vertex, topRightFront);
-    verts->SetNormal(vertex, right);
-    verts->SetUV(0, vertex++, 0.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topRightFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &right);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv00);
 
-    verts->SetPosition(vertex, topRightBack);
-    verts->SetNormal(vertex, right);
-    verts->SetUV(0, vertex++, 1.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topRightBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &right);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv10);
 
-    verts->SetPosition(vertex, bottomRightBack);
-    verts->SetNormal(vertex, right);
-    verts->SetUV(0, vertex++, 1.0f, 1.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomRightBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &right);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv11);
 
-    verts->SetPosition(vertex, bottomRightFront);
-    verts->SetNormal(vertex, right);
-    verts->SetUV(0, vertex++, 0.0f, 1.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomRightFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &right);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv01);
     
     indices->Set(index++, vertex - 4);
     indices->Set(index++, vertex - 3);
@@ -84,21 +94,21 @@ void Shapes::InitCube(Renderer* renderer)
     indices->Set(index++, vertex - 2);
 
     // Back
-    verts->SetPosition(vertex, topRightBack);
-    verts->SetNormal(vertex, back);
-    verts->SetUV(0, vertex++, 0.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topRightBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &back);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv00);
 
-    verts->SetPosition(vertex, topLeftBack);
-    verts->SetNormal(vertex, back);
-    verts->SetUV(0, vertex++, 1.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topLeftBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &back);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv10);
 
-    verts->SetPosition(vertex, bottomLeftBack);
-    verts->SetNormal(vertex, back);
-    verts->SetUV(0, vertex++, 1.0f, 1.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomLeftBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &back);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv11);
 
-    verts->SetPosition(vertex, bottomRightBack);
-    verts->SetNormal(vertex, back);
-    verts->SetUV(0, vertex++, 0.0f, 1.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomRightBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &back);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv01);
     
     indices->Set(index++, vertex - 4);
     indices->Set(index++, vertex - 3);
@@ -108,21 +118,21 @@ void Shapes::InitCube(Renderer* renderer)
     indices->Set(index++, vertex - 2);
 
     // Left
-    verts->SetPosition(vertex, topLeftBack);
-    verts->SetNormal(vertex, left);
-    verts->SetUV(0, vertex++, 0.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topLeftBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &left);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv00);
 
-    verts->SetPosition(vertex, topLeftFront);
-    verts->SetNormal(vertex, left);
-    verts->SetUV(0, vertex++, 1.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topLeftFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &left);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv10);
 
-    verts->SetPosition(vertex, bottomLeftFront);
-    verts->SetNormal(vertex, left);
-    verts->SetUV(0, vertex++, 1.0f, 1.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomLeftFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &left);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv11);
 
-    verts->SetPosition(vertex, bottomLeftBack);
-    verts->SetNormal(vertex, left);
-    verts->SetUV(0, vertex++, 0.0f, 1.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomLeftBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &left);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv01);
     
     indices->Set(index++, vertex - 4);
     indices->Set(index++, vertex - 3);
@@ -132,22 +142,22 @@ void Shapes::InitCube(Renderer* renderer)
     indices->Set(index++, vertex - 2);
 
     // Top
-    verts->SetPosition(vertex, topLeftBack);
-    verts->SetNormal(vertex, top);
-    verts->SetUV(0, vertex++, 0.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topLeftBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &top);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv00);
 
-    verts->SetPosition(vertex, topRightBack);
-    verts->SetNormal(vertex, top);
-    verts->SetUV(0, vertex++, 1.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topRightBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &top);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv10);
 
-    verts->SetPosition(vertex, topRightFront);
-    verts->SetNormal(vertex, top);
-    verts->SetUV(0, vertex++, 1.0f, 1.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &topRightFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &top);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv11);
 
-    verts->SetPosition(vertex, topLeftFront);
-    verts->SetNormal(vertex, top);
-    verts->SetUV(0, vertex++, 0.0f, 1.0f);
-    
+    verts->SetVertexElement(vertex, positionOffset, 16, &topLeftFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &top);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv01);
+        
     indices->Set(index++, vertex - 4);
     indices->Set(index++, vertex - 3);
     indices->Set(index++, vertex - 1);
@@ -156,21 +166,21 @@ void Shapes::InitCube(Renderer* renderer)
     indices->Set(index++, vertex - 2);
 
     // Bottom
-    verts->SetPosition(vertex, bottomLeftFront);
-    verts->SetNormal(vertex, bottom);
-    verts->SetUV(0, vertex++, 0.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomLeftFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &bottom);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv00);
 
-    verts->SetPosition(vertex, bottomRightFront);
-    verts->SetNormal(vertex, bottom);
-    verts->SetUV(0, vertex++, 1.0f, 0.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomRightFront);
+    verts->SetVertexElement(vertex, normalOffset, 16, &bottom);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv10);
 
-    verts->SetPosition(vertex, bottomRightBack);
-    verts->SetNormal(vertex, bottom);
-    verts->SetUV(0, vertex++, 1.0f, 1.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomRightBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &bottom);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv11);
 
-    verts->SetPosition(vertex, bottomLeftBack);
-    verts->SetNormal(vertex, bottom);
-    verts->SetUV(0, vertex++, 0.0f, 1.0f);
+    verts->SetVertexElement(vertex, positionOffset, 16, &bottomLeftBack);
+    verts->SetVertexElement(vertex, normalOffset, 16, &bottom);
+    verts->SetVertexElement(vertex++, uvOffset, 8, &uv01);
     
     indices->Set(index++, vertex - 4);
     indices->Set(index++, vertex - 3);
@@ -178,16 +188,15 @@ void Shapes::InitCube(Renderer* renderer)
     indices->Set(index++, vertex - 1);
     indices->Set(index++, vertex - 3);
     indices->Set(index++, vertex - 2);
+
+    return mesh;
 }
 
-void Shapes::DrawCube(Renderer* renderer, Matrix4x4 ltw, Material* material)
+void Shapes::DrawCube(Mesh* cube, const Matrix4x4& ltw, Material* material)
 {
-    if( !sCube )
-        InitCube(renderer);
-
     if( !material )
         material = Shapes::sDefaultMaterial;
-    sCube->GetSubmesh(0)->SetMaterial(material);
+    cube->GetSubmesh(0)->SetMaterial(material);
 
-    renderer->DrawMesh(sCube);
+    cube->Draw(ltw);
 }

@@ -1,5 +1,6 @@
 #include "..\PTEngine.h"
 #include "RendererD3D.h"
+#include "VertexBufferD3D9.h"
 
 #pragma comment (lib, "d3d9.lib")
 
@@ -80,9 +81,22 @@ void RendererD3D::Clear(bool bClearColor, const RGBA& color, bool bClearDepth, f
     mDevice->Clear(0, NULL, flags, clearColor, depthValue, stencilValue);
 }
 
-VertexBuffer* RendererD3D::CreateVertexBuffer(int vertexCount, uint vertexComponents, bool dynamic)
-{
-    return 0;
+VertexBuffer* RendererD3D::CreateVertexBuffer(int vertexCount, const VertexFormat& format, bool dynamic)
+{   
+    VertexBufferD3D9* vb = 0;
+
+    int vertexSize = format.GetSize();
+    DWORD flags = 0;
+    flags |= dynamic ? D3DUSAGE_DYNAMIC : 0;
+
+    IDirect3DVertexBuffer9* vbd3d = 0;
+    HRESULT res = mDevice->CreateVertexBuffer(vertexCount * vertexSize, flags, 0, D3DPOOL_DEFAULT, &vbd3d, 0);
+    if( res == D3D_OK )
+    {
+        vb = new VertexBufferD3D9(this, vbd3d, format);
+    }
+
+    return vb;
 }
 
 IndexBuffer* RendererD3D::CreateIndexBuffer(int indexCount, bool sixteenBit)

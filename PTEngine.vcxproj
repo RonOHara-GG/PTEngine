@@ -35,6 +35,7 @@
     <ClInclude Include="Vector4.h" />
     <ClInclude Include="Vector4_Default.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="VertexFormat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assert.cpp" />

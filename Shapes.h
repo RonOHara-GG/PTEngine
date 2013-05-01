@@ -1,16 +1,18 @@
 #ifndef _SHAPES_H_
 #define _SHAPES_H_
 
-#include "Renderer.h"
-#include "Material.h"
+class Renderer;
+class Material;
+class Mesh;
+class Matrix4x4;
 
 namespace Shapes
 {
     void Init();
     void Shutdown();
 
-    void InitCube(Renderer* renderer);
-    void DrawCube(Renderer* renderer, Matrix4x4 localToWorld, Material* material = 0);
+    Mesh* CreateCube(Renderer* renderer);
+    void DrawCube(Mesh* Cube, const Matrix4x4& localToWorld, Material* material = 0);
 
 
     extern Material* sDefaultMaterial;

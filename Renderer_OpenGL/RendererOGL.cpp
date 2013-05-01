@@ -104,7 +104,7 @@ void RendererOGL::Clear(bool bClearColor, const RGBA& color, bool bClearDepth, f
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-VertexBuffer* RendererOGL::CreateVertexBuffer(int vertexCount, uint vertexComponents, bool dynamic)
+VertexBuffer* RendererOGL::CreateVertexBuffer(int vertexCount, const VertexFormat& format, bool dynamic)
 {
     return 0;
 }

@@ -36,10 +36,10 @@ Submesh::~Submesh(void)
     }
 }
 
-bool Submesh::Create(Renderer* renderer, int vertexCount, unsigned int vertexComponents, int primitiveCount, Renderer::ePrimitiveType primType, bool sixteenBitIndices, bool dynamicVB)
+bool Submesh::Create(Renderer* renderer, int vertexCount, const VertexFormat& vertexFormat, int primitiveCount, Renderer::ePrimitiveType primType, bool sixteenBitIndices, bool dynamicVB)
 {
     // Create vertex buffer
-    VertexBuffer* vb = renderer->CreateVertexBuffer(vertexCount, vertexComponents, dynamicVB);
+    VertexBuffer* vb = renderer->CreateVertexBuffer(vertexCount, vertexFormat, dynamicVB);
     if( !vb )
         return false;
     SetVertexBuffer(0, vb);
