@@ -93,7 +93,7 @@ VertexBuffer* RendererD3D::CreateVertexBuffer(int vertexCount, const VertexForma
     HRESULT res = mDevice->CreateVertexBuffer(vertexCount * vertexSize, flags, 0, D3DPOOL_DEFAULT, &vbd3d, 0);
     if( res == D3D_OK )
     {
-        vb = new VertexBufferD3D9(this, vbd3d, format);
+        vb = new VertexBufferD3D9(vbd3d, format);
     }
 
     return vb;
