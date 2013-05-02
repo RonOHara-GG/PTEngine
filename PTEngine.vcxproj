@@ -36,6 +36,7 @@
     <ClInclude Include="Vector4_Default.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexFormat.h" />
+    <ClInclude Include="VertexProfile.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assert.cpp" />
@@ -51,6 +52,9 @@
     <ClCompile Include="RGBA.cpp" />
     <ClCompile Include="Shapes.cpp" />
     <ClCompile Include="Submesh.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FutureFeatures.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{072AAFF2-6CAA-4952-8D3F-AEC797AEECB7}</ProjectGuid>

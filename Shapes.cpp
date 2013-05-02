@@ -4,23 +4,26 @@
 #include "Submesh.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Renderer.h"
 
 Material* Shapes::sDefaultMaterial = 0;
 
 Mesh* Shapes::CreateCube(Renderer* renderer)
 {
     Mesh* mesh = new Mesh(renderer);
-    Submesh* submesh = new Submesh();
+    Submesh* submesh = new Submesh(Renderer::ePT_Triangles, 12);
     mesh->AddSubmesh(submesh);
 
     VertexFormat format;
     int positionOffset = format.Add(VertexFormat::eVU_Position, VertexFormat::eVET_Float3);
     int normalOffset = format.Add(VertexFormat::eVU_Normal, VertexFormat::eVET_Float3);
     int uvOffset = format.Add(VertexFormat::eVU_UV0, VertexFormat::eVET_Float2);
-
-    submesh->Create(renderer, 24, format, 12, Renderer::ePT_Triangles);
-    VertexBuffer* verts = submesh->GetVertexBuffer();
-    IndexBuffer* indices = submesh->GetIndexBuffer();
+    
+    VertexBuffer* verts = renderer->CreateVertexBuffer(24, format);
+    IndexBuffer* indices = renderer->CreateIndexBuffer(Renderer::GetPrimitiveIndexCount(12, Renderer::ePT_Triangles));
+    submesh->AddVertexBuffer(verts);
+    submesh->SetIndexBuffer(indices);
+    submesh->CreateVertexProfile(renderer);
 
     Vector3 topLeftFront(-1, 1, -1);
     Vector3 topRightFront(1, 1, -1);

@@ -28,10 +28,13 @@ public:
 
     virtual void Clear(bool bClearColor = true, const RGBA& color = RGBA::Black, bool bClearDepth = true, float depthValue = 1.0f, bool bClearStencil = false, unsigned int stencilValue = 0);
 
+    virtual VertexProfile* CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers);
     virtual VertexBuffer* CreateVertexBuffer(int vertexCount, const VertexFormat& format, bool dynamic = false);
     virtual IndexBuffer* CreateIndexBuffer(int indexCount, bool sixteenBit = true);
-
-    virtual void DrawMesh(Mesh* mesh);
+        
+    virtual VertexProfile* SetVertexProfile(VertexProfile* profile);
+    virtual VertexBuffer* SetVertexBuffer(uint index, VertexBuffer* vertexBuffer);
+    virtual IndexBuffer* SetIndexBuffer(IndexBuffer* indexBuffer);
 
 private:
 	HWND	mWindow;

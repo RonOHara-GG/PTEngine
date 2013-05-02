@@ -104,6 +104,11 @@ void RendererOGL::Clear(bool bClearColor, const RGBA& color, bool bClearDepth, f
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+VertexProfile* RendererOGL::CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers)
+{
+    return 0;
+}
+
 VertexBuffer* RendererOGL::CreateVertexBuffer(int vertexCount, const VertexFormat& format, bool dynamic)
 {
     return 0;
@@ -114,6 +119,17 @@ IndexBuffer* RendererOGL::CreateIndexBuffer(int indexCount, bool sixteenBit)
     return 0;
 }
 
-void RendererOGL::DrawMesh(Mesh* mesh)
+VertexProfile* RendererOGL::SetVertexProfile(VertexProfile* profile)
 {
+    return 0;
+}
+
+VertexBuffer* RendererOGL::SetVertexBuffer(uint index, VertexBuffer* vertexBuffer)
+{
+    return 0;
+}
+
+IndexBuffer* RendererOGL::SetIndexBuffer(IndexBuffer* indexBuffer)
+{
+    return 0;
 }

@@ -4,10 +4,14 @@
     <ClInclude Include="RendererD3D.h" />
     <ClInclude Include="RD3DPlugin.h" />
     <ClInclude Include="VertexBufferD3D9.h" />
+    <ClInclude Include="IndexBufferD3D9.h" />
+    <ClInclude Include="VertexProfileD3D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RendererD3D.cpp" />
     <ClCompile Include="RD3DPlugin.cpp" />
     <ClCompile Include="VertexBufferD3D9.cpp" />
+    <ClCompile Include="IndexBufferD3D9.cpp" />
+    <ClCompile Include="VertexProfileD3D.cpp" />
   </ItemGroup>
 </Project>

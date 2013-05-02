@@ -15,11 +15,7 @@ public:
         eVET_Float,
         eVET_Float2,
         eVET_Float3,
-        eVET_Float4,
-        eVET_Int,
-        eVET_Int2,
-        eVET_Int3,
-        eVET_Int4
+        eVET_Float4
     };
 
     struct VertexElement
@@ -37,35 +33,44 @@ public:
 
     int Add(VertexUsage usage, VertexElementType type);
     int GetSize() const         { return mSize; }
+    int GetElementCount() const { return mElements.Count(); }
+    
+    const VertexElement& GetElement(int index) const    { return mElements[index]; }
+
+
+    static int GetDataSizeOfType(VertexElementType type);
 
 protected:
     DynamicArray<VertexElement> mElements;
     int                         mSize;
 };
 
+inline int VertexFormat::GetDataSizeOfType(VertexElementType type)
+{
+    int size = 0;
+    switch( type )
+    {
+        case eVET_Float:
+            size += 4;
+            break;
+        case eVET_Float2:
+            size += 8;
+            break;
+        case eVET_Float3:
+            size += 12;
+            break;
+        case eVET_Float4:
+            size += 16;
+            break;
+    }
+    return size;
+}
+
 inline int VertexFormat::Add(VertexUsage usage, VertexElementType type)
 {
     int offset = mSize;
     mElements.Add(VertexElement(usage, type));
-    switch( type )
-    {
-        case eVET_Float:
-        case eVET_Int:
-            mSize += 4;
-            break;
-        case eVET_Float2:
-        case eVET_Int2:
-            mSize += 8;
-            break;
-        case eVET_Float3:
-        case eVET_Int3:
-            mSize += 12;
-            break;
-        case eVET_Float4:
-        case eVET_Int4:
-            mSize += 16;
-            break;
-    }
+    mSize += GetDataSizeOfType(type);
     return offset;
 }
 

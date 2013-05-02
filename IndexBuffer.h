@@ -1,8 +1,6 @@
 #ifndef _INDEX_BUFFER_H_
 #define _INDEX_BUFFER_H_
 
-#include "Renderer.h"
-
 class IndexBuffer : public OwnedObject
 {
 public:
@@ -12,6 +10,8 @@ public:
     virtual void Unlock() = 0;
     
     virtual void Set(int index, uint vertex) = 0;
+
+    virtual void* GetBuffer() = 0;
 
 protected:
 

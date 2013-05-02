@@ -5,6 +5,7 @@
 #include "..\Renderer.h"
 #include "..\PluginManager.h"
 #include "..\Shapes.h"
+#include "..\Mesh.h"
 
 Mesh* gCubes[2] = {0, 0};
 Renderer* gRenderers[2] = {0, 0};
@@ -70,7 +71,7 @@ void DoFrame()
             if( gCubes[i] )
             {
                 Matrix4x4 localToWorld;
-                Shapes::DrawCube(gCubes[i], localToWorld);
+                gCubes[i]->Draw(localToWorld);
             }
 
             gRenderers[i]->EndFrame();

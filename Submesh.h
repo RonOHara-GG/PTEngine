@@ -5,21 +5,21 @@
 
 class Material;
 class VertexFormat;
-
-#define MAX_VERTEX_BUFFERS  4
+class VertexProfile;
 
 class Submesh : public OwnedObject
 {
 public:
-    Submesh(void);
+    Submesh(Renderer::ePrimitiveType primType, int primCount, int numVertexBuffers = 1);
     virtual ~Submesh(void);
 
-    bool Create(class Renderer* renderer, int vertexCount, const VertexFormat& vertexFormat, int primitiveCount, Renderer::ePrimitiveType primType, bool sixteenBitIndices = true, bool dynamicVB = false);
+    void CreateVertexProfile(Renderer* renderer);
 
     VertexBuffer* GetVertexBuffer(int index = 0)    { return mVertexBuffers[index]; }
-    void SetVertexBuffer(int index, VertexBuffer* vertexBuffer);
+    void AddVertexBuffer(VertexBuffer* vertexBuffer, bool submeshOwnsThis = true);
     
     IndexBuffer* GetIndexBuffer()                   { return mIndexBuffer; }
+    void SetIndexBuffer(IndexBuffer* indexBuffer, bool submeshOwnsThis = true);
     
     int GetPrimitiveCount()                         { return mPrimitiveCount; }
     Renderer::ePrimitiveType GetPrimitiveType()     { return mPrimitiveType; }
@@ -27,9 +27,14 @@ public:
     Material* GetMaterial()                         { return mMaterial; }
     void SetMaterial(Material* material)            { mMaterial = material; }
 
+    void Draw(Renderer* renderer, const Matrix4x4& ltw);
+
 protected:
-    VertexBuffer* mVertexBuffers[MAX_VERTEX_BUFFERS];
+    VertexProfile* mVertexProfile;
+    DynamicArray<VertexBuffer*> mVertexBuffers;
+
     IndexBuffer* mIndexBuffer;
+
     Renderer::ePrimitiveType mPrimitiveType;
     int mPrimitiveCount;
     Material* mMaterial;

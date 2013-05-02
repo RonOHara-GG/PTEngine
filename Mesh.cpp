@@ -22,4 +22,11 @@ Mesh::~Mesh(void)
 
 void Mesh::Draw(const Matrix4x4& ltw)
 {
+    for( int i = 0; i < mSubmeshes.Count(); i++ )
+    {
+        if( mSubmeshes[i] )
+        {
+            mSubmeshes[i]->Draw(mRenderer, ltw);
+        }
+    }
 }

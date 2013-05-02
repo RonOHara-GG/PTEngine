@@ -15,6 +15,11 @@ public:
     
     virtual void SetVertexElement(int vertexIndex, int elementOffset, int elementSize, void* elementData);
 
+    virtual void* GetBuffer()                               { return mVB; }
+    virtual int GetVertexSize()                             { return mVertexFormat.GetSize(); }
+    virtual const VertexFormat& GetVertexFormat() const     { return mVertexFormat; }
+
+
 protected:
     IDirect3DVertexBuffer9* mVB;
     VertexFormat            mVertexFormat;

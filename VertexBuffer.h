@@ -14,6 +14,10 @@ public:
     virtual void Unlock() = 0;
 
     virtual void SetVertexElement(int vertexIndex, int elementOffset, int elementSize, void* elementData) = 0;
+
+    virtual void* GetBuffer() = 0;
+    virtual int GetVertexSize() = 0;
+    virtual const VertexFormat& GetVertexFormat() const = 0;
     
 protected:
 

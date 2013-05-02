@@ -35,7 +35,7 @@ template<class T>
 class DynamicArray : public DynamicArrayBase
 {
 public:
-    DynamicArray();
+    DynamicArray(int allocationBlockCount = 10);
 
     int Add(T& item);
     T& Get(int index);
@@ -135,7 +135,7 @@ inline void* DynamicArrayBase::operator[](int index) const
 // Dynamic Array
 //////////////////////////////////////////////////////////////
 template<class T>
-inline DynamicArray<T>::DynamicArray() : DynamicArrayBase(sizeof(T))
+inline DynamicArray<T>::DynamicArray(int allocationBlockCount) : DynamicArrayBase(sizeof(T), allocationBlockCount)
 {
 }
 

@@ -22,6 +22,8 @@
     <None Include="PTTest.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="BasicVertexShader.hlsl" />
+    <None Include="BasicPixelShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

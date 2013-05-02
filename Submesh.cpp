@@ -2,23 +2,32 @@
 #include "Submesh.h"
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
+#include "VertexProfile.h"
 #include "Material.h"
 
 
-Submesh::Submesh(void)
+Submesh::Submesh(Renderer::ePrimitiveType primType, int primCount, int numVertexBuffers) : mVertexBuffers(numVertexBuffers)
 {
-    memset(mVertexBuffers, 0, sizeof(mVertexBuffers));
     mIndexBuffer = 0;
     mMaterial = 0;
-    mPrimitiveCount = 0;
+    mPrimitiveType = primType;
+    mPrimitiveCount = primCount;
+    mVertexProfile = 0;
 }
 
 Submesh::~Submesh(void)
 {
-    // Clear vertex buffers
-    for( int i = 0; i < MAX_VERTEX_BUFFERS; i++ )
+    if( mVertexProfile )
     {
-        SetVertexBuffer(i, 0);
+        delete mVertexProfile;
+        mVertexProfile = 0;
+    }
+
+    // Clear vertex buffers
+    for( int i = 0; i < mVertexBuffers.Count(); i++ )
+    {
+        if( mVertexBuffers[i] && mVertexBuffers[i]->GetOwner() == this )
+            delete mVertexBuffers[i];
     }
 
     // Destroy the index buffer
@@ -36,31 +45,42 @@ Submesh::~Submesh(void)
     }
 }
 
-bool Submesh::Create(Renderer* renderer, int vertexCount, const VertexFormat& vertexFormat, int primitiveCount, Renderer::ePrimitiveType primType, bool sixteenBitIndices, bool dynamicVB)
+void Submesh::CreateVertexProfile(Renderer* renderer)
 {
-    // Create vertex buffer
-    VertexBuffer* vb = renderer->CreateVertexBuffer(vertexCount, vertexFormat, dynamicVB);
-    if( !vb )
-        return false;
-    SetVertexBuffer(0, vb);
+    if( mVertexProfile )
+        delete mVertexProfile;
 
-    // Create index buffer
-    mIndexBuffer = renderer->CreateIndexBuffer(Renderer::GetPrimitiveIndexCount(primitiveCount, primType), sixteenBitIndices);
-    if( !mIndexBuffer )
-        return false;
-
-    return true;
+    mVertexProfile = renderer->CreateVertexProfile(mVertexBuffers);
 }
 
-void Submesh::SetVertexBuffer(int index, VertexBuffer* buffer)
+void Submesh::AddVertexBuffer(VertexBuffer* buffer, bool submeshOwnsThis)
 {
-    if( index >= 0 && index < MAX_VERTEX_BUFFERS )
+    if( submeshOwnsThis )
+        buffer->SetOwner(this);
+    mVertexBuffers.Add(buffer);
+}
+
+void Submesh::SetIndexBuffer(IndexBuffer* indexBuffer, bool submeshOwnsThis)
+{
+    if( submeshOwnsThis )
+        indexBuffer->SetOwner(this);
+    mIndexBuffer = indexBuffer;
+}
+
+void Submesh::Draw(Renderer* renderer, const Matrix4x4& ltw)
+{
+    // Bind Material
+    renderer->SetMaterial(mMaterial, ltw);
+
+    // Bind Vertex Buffers
+    renderer->SetVertexProfile(mVertexProfile);
+    for( int i = 0; i < mVertexBuffers.Count(); i++ )
     {
-        // Clear any existing vertex buffer in this spot if we own it
-        if( mVertexBuffers[index] && mVertexBuffers[index]->GetOwner() == this )
-        {
-            delete mVertexBuffers[index];
-        }
-        mVertexBuffers[index] = buffer;
+        renderer->SetVertexBuffer(i, mVertexBuffers[i]);
     }
+
+    // Bind Index Buffer
+    renderer->SetIndexBuffer(mIndexBuffer);
+
+    // Draw the mesh
 }
