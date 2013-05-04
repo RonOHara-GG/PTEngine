@@ -19,7 +19,10 @@ inline void Vector4::Set(float x, float y, float z, float w)
     mW = w;
 }
 
-
+inline float Vector4::Dot(const Vector4& v) const
+{
+    return ((mX * v.mX) + (mY * v.mY) + (mZ * v.mZ) + (mW * v.mW));
+}
 
 
 #endif // _VECTOR4_DEFAULT_H_

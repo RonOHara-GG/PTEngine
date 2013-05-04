@@ -39,6 +39,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)Lib\x86\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -79,17 +81,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="IndexBufferD3D9.h" />
+    <ClInclude Include="PixelShaderD3D9.h" />
     <ClInclude Include="RD3DPlugin.h" />
     <ClInclude Include="RendererD3D.h" />
     <ClInclude Include="VertexBufferD3D9.h" />
     <ClInclude Include="VertexProfileD3D.h" />
+    <ClInclude Include="VertexShaderD3D9.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IndexBufferD3D9.cpp" />
+    <ClCompile Include="PixelShaderD3D9.cpp" />
     <ClCompile Include="RD3DPlugin.cpp" />
     <ClCompile Include="RendererD3D.cpp" />
     <ClCompile Include="VertexBufferD3D9.cpp" />
     <ClCompile Include="VertexProfileD3D.cpp" />
+    <ClCompile Include="VertexShaderD3D9.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

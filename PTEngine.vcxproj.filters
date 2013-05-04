@@ -27,6 +27,10 @@
     <ClInclude Include="DynamicLibrary.h" />
     <ClInclude Include="VertexFormat.h" />
     <ClInclude Include="VertexProfile.h" />
+    <ClInclude Include="FileManager.h" />
+    <ClInclude Include="File.h" />
+    <ClInclude Include="VertexShader.h" />
+    <ClInclude Include="PixelShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp" />
@@ -42,6 +46,9 @@
     <ClCompile Include="Plugin.cpp" />
     <ClCompile Include="DynamicLibrary.cpp" />
     <ClCompile Include="DynamicLibrary_Win.cpp" />
+    <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="File.cpp" />
+    <ClCompile Include="FileManager_Win.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FutureFeatures.txt" />

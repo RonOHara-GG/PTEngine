@@ -4,9 +4,12 @@
 #include "..\PTEngine.h"
 #include "..\Renderer.h"
 #include "..\PluginManager.h"
+#include "..\FileManager.h"
 #include "..\Shapes.h"
 #include "..\Mesh.h"
+#include "..\Material.h"
 
+Material* gMaterials[2] = {0,0};
 Mesh* gCubes[2] = {0, 0};
 Renderer* gRenderers[2] = {0, 0};
 #define NUM_RENDERERS   (sizeof(gRenderers) / sizeof(Renderer*))
@@ -25,7 +28,22 @@ void InitGame(HWND hWndTop, HWND hWndBottom)
     if( gRenderers[0] )
     {
         if( !gRenderers[0]->Init(hWndTop, false) )
+        {
             gRenderers[0] = 0;
+        }
+        else
+        {
+            gMaterials[0] = new Material();
+
+            File* vertexShaderFile = FILE_MANAGER->LoadFile("./BaseVertexShader.hlsl");
+            File* pixelShaderFile = FILE_MANAGER->LoadFile("./BasePixelShader.hlsl");
+
+            VertexShader* vs = gRenderers[0]->CreateVertexShader(vertexShaderFile->GetData(), vertexShaderFile->GetSize());
+            gMaterials[0]->SetVertexShader(vs);
+
+            PixelShader* ps = gRenderers[0]->CreatePixelShader(pixelShaderFile->GetData(), pixelShaderFile->GetSize());
+            gMaterials[0]->SetPixelShader(ps);
+        }
     }
 
     gRenderers[1] = PLUGIN_MANAGER->GetRenderer("OpenGL");
@@ -39,7 +57,7 @@ void InitGame(HWND hWndTop, HWND hWndBottom)
     {
         if( gRenderers[i] )
         {
-            gCubes[i] = Shapes::CreateCube(gRenderers[i]);
+            gCubes[i] = Shapes::CreateCube(gRenderers[i], gMaterials[i]);
         }
     }
 }

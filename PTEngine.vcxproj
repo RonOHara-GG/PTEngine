@@ -16,12 +16,15 @@
     <ClInclude Include="Debug.h" />
     <ClInclude Include="DynamicArray.h" />
     <ClInclude Include="DynamicLibrary.h" />
+    <ClInclude Include="File.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OwnedObject.h" />
+    <ClInclude Include="PixelShader.h" />
     <ClInclude Include="Plugin.h" />
     <ClInclude Include="PluginManager.h" />
     <ClInclude Include="PTEngine.h" />
@@ -37,11 +40,15 @@
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexFormat.h" />
     <ClInclude Include="VertexProfile.h" />
+    <ClInclude Include="VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assert.cpp" />
     <ClCompile Include="DynamicLibrary.cpp" />
     <ClCompile Include="DynamicLibrary_Win.cpp" />
+    <ClCompile Include="File.cpp" />
+    <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="FileManager_Win.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Memory_Win.cpp" />

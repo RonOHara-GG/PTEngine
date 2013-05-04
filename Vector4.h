@@ -9,6 +9,8 @@ public:
 
     void Set(float x, float y, float z, float w);
 
+    float Dot(const Vector4& v) const;
+
 public:
     float mX;
     float mY;

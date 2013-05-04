@@ -11,11 +11,8 @@ namespace Shapes
     void Init();
     void Shutdown();
 
-    Mesh* CreateCube(Renderer* renderer);
-    void DrawCube(Mesh* Cube, const Matrix4x4& localToWorld, Material* material = 0);
+    Mesh* CreateCube(Renderer* renderer, Material* material = 0);
 
-
-    extern Material* sDefaultMaterial;
 };
 
 #endif // _SHAPES_H_

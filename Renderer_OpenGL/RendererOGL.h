@@ -27,11 +27,14 @@ public:
     virtual void SetProjectionMatrix(const Matrix4x4& projection);
 
     virtual void Clear(bool bClearColor = true, const RGBA& color = RGBA::Black, bool bClearDepth = true, float depthValue = 1.0f, bool bClearStencil = false, unsigned int stencilValue = 0);
-
+    
+    virtual VertexShader* CreateVertexShader(void* shaderData, uint shaderDataSize);
+    virtual PixelShader* CreatePixelShader(void* shaderData, uint shaderDataSize);
     virtual VertexProfile* CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers);
     virtual VertexBuffer* CreateVertexBuffer(int vertexCount, const VertexFormat& format, bool dynamic = false);
     virtual IndexBuffer* CreateIndexBuffer(int indexCount, bool sixteenBit = true);
         
+    virtual Material* SetMaterial(Material* material, const Matrix4x4& ltw);
     virtual VertexProfile* SetVertexProfile(VertexProfile* profile);
     virtual VertexBuffer* SetVertexBuffer(uint index, VertexBuffer* vertexBuffer);
     virtual IndexBuffer* SetIndexBuffer(IndexBuffer* indexBuffer);

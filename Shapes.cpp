@@ -6,9 +6,7 @@
 #include "IndexBuffer.h"
 #include "Renderer.h"
 
-Material* Shapes::sDefaultMaterial = 0;
-
-Mesh* Shapes::CreateCube(Renderer* renderer)
+Mesh* Shapes::CreateCube(Renderer* renderer, Material* material)
 {
     Mesh* mesh = new Mesh(renderer);
     Submesh* submesh = new Submesh(Renderer::ePT_Triangles, 12);
@@ -24,6 +22,7 @@ Mesh* Shapes::CreateCube(Renderer* renderer)
     submesh->AddVertexBuffer(verts);
     submesh->SetIndexBuffer(indices);
     submesh->CreateVertexProfile(renderer);
+    submesh->SetMaterial(material);
 
     Vector3 topLeftFront(-1, 1, -1);
     Vector3 topRightFront(1, 1, -1);
@@ -193,13 +192,4 @@ Mesh* Shapes::CreateCube(Renderer* renderer)
     indices->Set(index++, vertex - 2);
 
     return mesh;
-}
-
-void Shapes::DrawCube(Mesh* cube, const Matrix4x4& ltw, Material* material)
-{
-    if( !material )
-        material = Shapes::sDefaultMaterial;
-    cube->GetSubmesh(0)->SetMaterial(material);
-
-    cube->Draw(ltw);
 }

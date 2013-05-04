@@ -3,8 +3,9 @@
 
 #include <string.h> // memset
 
-typedef unsigned int    uint;
-typedef unsigned short  ushort;
+typedef unsigned int        uint;
+typedef unsigned short      ushort;
+typedef unsigned __int64    uint64;
 
 #include "Assert.h"
 #include "Memory.h"

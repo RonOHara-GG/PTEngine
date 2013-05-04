@@ -10,6 +10,9 @@ class VertexBuffer;
 class IndexBuffer;
 class VertexFormat;
 class VertexProfile;
+class VertexShader;
+class PixelShader;
+class Material;
 
 class Renderer
 {
@@ -40,10 +43,13 @@ public:
 
     virtual void Clear(bool bClearColor = true, const RGBA& color = RGBA::Black, bool bClearDepth = true, float depthValue = 1.0f, bool bClearStencil = false, unsigned int stencilValue = 0) = 0;
 
+    virtual VertexShader* CreateVertexShader(void* shaderData, uint shaderDataSize) = 0;
+    virtual PixelShader* CreatePixelShader(void* shaderData, uint shaderDataSize) = 0;
     virtual VertexProfile* CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers) = 0;
     virtual VertexBuffer* CreateVertexBuffer(int vertexCount, const VertexFormat& format, bool dynamic = false) = 0;
     virtual IndexBuffer* CreateIndexBuffer(int indexCount, bool sixteenBit = true) = 0;
 
+    virtual Material* SetMaterial(Material* material, const Matrix4x4& ltw) = 0;
     virtual VertexProfile* SetVertexProfile(VertexProfile* profile) = 0;
     virtual VertexBuffer* SetVertexBuffer(uint index, VertexBuffer* vertexBuffer) = 0;
     virtual IndexBuffer* SetIndexBuffer(IndexBuffer* indexBuffer) = 0;

@@ -1,10 +1,15 @@
 #include "..\PTEngine.h"
+#include "..\Material.h"
+
 #include "RendererD3D.h"
 #include "VertexProfileD3D.h"
 #include "VertexBufferD3D9.h"
 #include "IndexBufferD3D9.h"
+#include "VertexShaderD3D9.h"
+#include "PixelShaderD3D9.h"
 
 #pragma comment (lib, "d3d9.lib")
+#pragma comment (lib, "d3dx9.lib")
 
 RendererD3D::RendererD3D(void)
 {
@@ -12,6 +17,7 @@ RendererD3D::RendererD3D(void)
     mCurrentIndexBuffer = 0;
     mCurrentVertexProfile = 0;
     mCurrentVertexBuffers = 0;
+    mCurrentMaterial = 0;
 }
 
 
@@ -40,6 +46,9 @@ bool RendererD3D::Init(void* window, bool fullScreen)
     
     mCurrentVertexBuffers = (VertexBuffer**)malloc(sizeof(VertexBuffer*) * mDeviceCaps.MaxStreams);
     memset(mCurrentVertexBuffers, 0, sizeof(VertexBuffer*) * mDeviceCaps.MaxStreams);
+
+    mVertexShaderProfile = D3DXGetVertexShaderProfile(mDevice);
+    mPixelShaderProfile = D3DXGetPixelShaderProfile(mDevice);
 
     return true;
 }
@@ -93,6 +102,56 @@ void RendererD3D::Clear(bool bClearColor, const RGBA& color, bool bClearDepth, f
     D3DCOLOR clearColor = D3DCOLOR_ARGB(a, r, g, b);
 
     mDevice->Clear(0, NULL, flags, clearColor, depthValue, stencilValue);
+}
+
+ID3DXBuffer* RendererD3D::CompileShader(void* shaderData, uint shaderDataSize, const char* entryPoint, const char* shaderProfile)
+{    
+    ID3DXBuffer* d3dshader = 0;
+    HRESULT res = D3DXCompileShader((const char*)shaderData, shaderDataSize, 0, 0, entryPoint, shaderProfile, 0, &d3dshader, 0, 0);
+    if( res == D3D_OK )
+        return d3dshader;
+
+    return 0;
+}
+
+VertexShader* RendererD3D::CreateVertexShader(void* shaderData, uint shaderDataSize)
+{
+    VertexShaderD3D9* shader = 0;
+
+    ID3DXBuffer* d3dshader = CompileShader(shaderData, shaderDataSize, "vsmain", mVertexShaderProfile);
+    if( d3dshader )
+    {
+        IDirect3DVertexShader9* d3dShader = 0;
+        HRESULT res = mDevice->CreateVertexShader((const DWORD*)d3dshader->GetBufferPointer(), &d3dShader);
+        if( res == D3D_OK )
+        {
+            shader = new VertexShaderD3D9(d3dShader);
+        }
+
+        d3dshader->Release();
+    }
+
+    return shader;
+}
+
+PixelShader* RendererD3D::CreatePixelShader(void* shaderData, uint shaderDataSize)
+{
+    PixelShaderD3D9* shader = 0;
+
+    ID3DXBuffer* d3dshader = CompileShader(shaderData, shaderDataSize, "psmain", mPixelShaderProfile);
+    if( d3dshader )
+    {
+        IDirect3DPixelShader9* d3dShader = 0;
+        HRESULT res = mDevice->CreatePixelShader((const DWORD*)d3dshader->GetBufferPointer(), &d3dShader);
+        if( res == D3D_OK )
+        {
+            shader = new PixelShaderD3D9(d3dShader);
+        }
+
+        d3dshader->Release();
+    }
+
+    return shader;
 }
 
 VertexProfile* RendererD3D::CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers)
@@ -213,6 +272,23 @@ IndexBuffer* RendererD3D::CreateIndexBuffer(int indexCount, bool sixteenBit)
     }
 
     return ib;
+}
+
+Material* RendererD3D::SetMaterial(Material* material, const Matrix4x4& ltw)
+{
+    Material* old = mCurrentMaterial;
+    mCurrentMaterial = material;
+
+    VertexShaderD3D9* vs = (VertexShaderD3D9*)material->GetVertexShader();
+    mDevice->SetVertexShader(vs->GetShader());
+
+    Matrix4x4 wvp = ltw * mViewProjectionMatrix;
+    mDevice->SetVertexShaderConstantF(0, wvp, 4);
+
+    PixelShaderD3D9* ps = (PixelShaderD3D9*)material->GetPixelShader();
+    mDevice->SetPixelShader(ps->GetShader());
+
+    return old;
 }
 
 VertexProfile* RendererD3D::SetVertexProfile(VertexProfile* profile)

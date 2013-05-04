@@ -104,6 +104,16 @@ void RendererOGL::Clear(bool bClearColor, const RGBA& color, bool bClearDepth, f
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+VertexShader* RendererOGL::CreateVertexShader(void* shaderData, uint shaderDataSize)
+{
+    return 0;
+}
+
+PixelShader* RendererOGL::CreatePixelShader(void* shaderData, uint shaderDataSize)
+{
+    return 0;
+}
+
 VertexProfile* RendererOGL::CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers)
 {
     return 0;
@@ -115,6 +125,11 @@ VertexBuffer* RendererOGL::CreateVertexBuffer(int vertexCount, const VertexForma
 }
 
 IndexBuffer* RendererOGL::CreateIndexBuffer(int indexCount, bool sixteenBit)
+{
+    return 0;
+}
+
+Material* RendererOGL::SetMaterial(Material* material, const Matrix4x4& ltw)
 {
     return 0;
 }
