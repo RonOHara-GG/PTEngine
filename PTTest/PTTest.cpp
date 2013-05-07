@@ -23,6 +23,7 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
+
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
@@ -105,7 +106,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    hTopWindow = CreateWindow(szWindowClass, szTitle, WS_CHILD | WS_BORDER, 2, 2, renderWidth, renderHeight, hMainWnd, NULL, hInstance, NULL);
    hBottomWindow = CreateWindow(szWindowClass, szTitle, WS_CHILD | WS_BORDER, 2, 4 + renderHeight, renderWidth, renderHeight, hMainWnd, NULL, hInstance, NULL);
-
+   
    if (!hMainWnd)
    {
       return FALSE;

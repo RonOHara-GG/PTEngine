@@ -20,8 +20,8 @@ public:
     virtual void EndFrame();
     virtual void FinishFrame();
 
-    virtual void SetViewport(Box viewSpace);
-    virtual void GetViewport(Box& viewSpace);
+    virtual void SetViewport(const Box& viewSpace);
+    virtual const Box& GetViewport();
 
     virtual void SetViewMatrix(const Matrix4x4& view);
     virtual void SetProjectionMatrix(const Matrix4x4& projection);

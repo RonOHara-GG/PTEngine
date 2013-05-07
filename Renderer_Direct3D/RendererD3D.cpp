@@ -72,20 +72,41 @@ void RendererD3D::FinishFrame()
     mDevice->Present(NULL, NULL, NULL, NULL);
 }
 
-void RendererD3D::SetViewport(Box viewSpace)
+void RendererD3D::SetViewport(const Box& viewSpace)
 {
+    mCurrentViewport = viewSpace;
+
+    D3DVIEWPORT9 vp;
+    vp.X = (DWORD)viewSpace.mMin.mX;
+    vp.Y = (DWORD)viewSpace.mMin.mY;
+    vp.MinZ = viewSpace.mMin.mZ;
+    vp.MaxZ = viewSpace.mMax.mZ;
+    vp.Height = (DWORD)viewSpace.mMax.mY;
+    vp.Width = (DWORD)viewSpace.mMax.mX;
+
+    mDevice->SetViewport(&vp);
 }
 
-void RendererD3D::GetViewport(Box& viewSpace)
+const Box& RendererD3D::GetViewport()
 {
+    return mCurrentViewport;
 }
 
 void RendererD3D::SetViewMatrix(const Matrix4x4& view)
 {
+    mViewMatrix = view;
+    UpdateViewProjection();
 }
 
 void RendererD3D::SetProjectionMatrix(const Matrix4x4& projection)
 {
+    mProjectionMatrix = projection;
+    UpdateViewProjection();
+}
+
+void RendererD3D::UpdateViewProjection()
+{
+    mViewProjectionMatrix = mViewMatrix * mProjectionMatrix;
 }
 
 void RendererD3D::Clear(bool bClearColor, const RGBA& color, bool bClearDepth, float depthValue, bool bClearStencil, unsigned int stencilValue)

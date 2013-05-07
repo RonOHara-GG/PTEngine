@@ -35,8 +35,8 @@ public:
     virtual void EndFrame() = 0;
     virtual void FinishFrame() {}
 
-    virtual void SetViewport(Box viewSpace) = 0;
-    virtual void GetViewport(Box& viewSpace) = 0;
+    virtual void SetViewport(const Box& viewSpace) = 0;
+    virtual const Box& GetViewport() = 0;
 
     virtual void SetViewMatrix(const Matrix4x4& view) = 0;
     virtual void SetProjectionMatrix(const Matrix4x4& projection) = 0;

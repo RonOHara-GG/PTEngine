@@ -1,6 +1,7 @@
 #ifndef _MATRIX4X4_H_
 #define _MATRIX4X4_H_
 
+#include "Vector3.h"
 #include "Vector4.h"
 
 class Matrix4x4
@@ -9,10 +10,14 @@ public:
     Matrix4x4();
 
     operator const float*() const;
-
-    Matrix4x4& operator *(const Matrix4x4& rhs) const;
+    Matrix4x4 operator *(const Matrix4x4& rhs) const;
 
     void Transpose();
+
+    void SetIdentity();
+    void SetPerspective(float width, float height, float near, float far, bool leftHanded = true);
+    void SetPerspectiveFov(float fovY, float aspectRatio, float near, float far, bool leftHanded = true);
+    void SetLook(const Vector3& eyePosition, const Vector3& lookAt, const Vector3& upDirection, bool leftHanded = true);
 
 public:
     Vector4 mA;
@@ -22,6 +27,11 @@ public:
 };
 
 inline Matrix4x4::Matrix4x4()
+{
+    SetIdentity();
+}
+
+inline void Matrix4x4::SetIdentity()
 {
     mA.Set(1.0f, 0.0f, 0.0f, 0.0f);
     mB.Set(0.0f, 1.0f, 0.0f, 0.0f);
@@ -34,7 +44,7 @@ inline Matrix4x4::operator const float*() const
     return (const float*)&mA;
 }
 
-inline Matrix4x4& Matrix4x4::operator *(const Matrix4x4& rhs) const
+inline Matrix4x4 Matrix4x4::operator *(const Matrix4x4& rhs) const
 {
     Matrix4x4 ret;
     Matrix4x4 trans = rhs;

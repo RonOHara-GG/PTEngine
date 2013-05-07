@@ -5,4 +5,6 @@
 #define MIN(a, b)                   ((a < b) ? a : b)
 #define CLAMP(val, min, max)        (MIN(MAX(val, min), max))
 
+#include <math.h>
+
 #endif // _MATH_H_

@@ -49,6 +49,7 @@
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="File.cpp" />
     <ClCompile Include="FileManager_Win.cpp" />
+    <ClCompile Include="Matrix4x4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FutureFeatures.txt" />

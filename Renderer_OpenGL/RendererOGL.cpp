@@ -78,12 +78,14 @@ void RendererOGL::FinishFrame()
 	SwapBuffers(mDeviceContext);
 }
 
-void RendererOGL::SetViewport(Box viewSpace)
+void RendererOGL::SetViewport(const Box& viewSpace)
 {
 }
 
-void RendererOGL::GetViewport(Box& viewSpace)
+Box temp;
+const Box& RendererOGL::GetViewport()
 {
+    return temp;
 }
 
 void RendererOGL::SetViewMatrix(const Matrix4x4& view)

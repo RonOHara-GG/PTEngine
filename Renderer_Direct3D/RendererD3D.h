@@ -22,8 +22,8 @@ public:
     virtual void EndFrame();
     virtual void FinishFrame();
 
-    virtual void SetViewport(Box viewSpace);
-    virtual void GetViewport(Box& viewSpace);
+    virtual void SetViewport(const Box& viewSpace);
+    virtual const Box& GetViewport();
 
     virtual void SetViewMatrix(const Matrix4x4& view);
     virtual void SetProjectionMatrix(const Matrix4x4& projection);
@@ -43,6 +43,7 @@ public:
 
 private:
     ID3DXBuffer* CompileShader(void* shaderData, uint shaderDataSize, const char* entryPoint, const char* shaderProfile);
+    void UpdateViewProjection();
     
 private:
     IDirect3DDevice9*           mDevice;
@@ -56,7 +57,10 @@ private:
     const char*                 mVertexShaderProfile;
     const char*                 mPixelShaderProfile;
 
+    Box                         mCurrentViewport;
     Matrix4x4                   mViewProjectionMatrix;
+    Matrix4x4                   mViewMatrix;
+    Matrix4x4                   mProjectionMatrix;
 };
 
 #endif // _RENDERER_D3D_H_

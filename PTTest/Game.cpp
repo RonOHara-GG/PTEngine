@@ -32,11 +32,10 @@ void InitGame(HWND hWndTop, HWND hWndBottom)
             gRenderers[0] = 0;
         }
         else
-        {
+        {            
             gMaterials[0] = new Material();
-
-            File* vertexShaderFile = FILE_MANAGER->LoadFile("./BaseVertexShader.hlsl");
-            File* pixelShaderFile = FILE_MANAGER->LoadFile("./BasePixelShader.hlsl");
+            File* vertexShaderFile = FILE_MANAGER->LoadFile("BasicVertexShader.hlsl");
+            File* pixelShaderFile = FILE_MANAGER->LoadFile("BasicPixelShader.hlsl");
 
             VertexShader* vs = gRenderers[0]->CreateVertexShader(vertexShaderFile->GetData(), vertexShaderFile->GetSize());
             gMaterials[0]->SetVertexShader(vs);
@@ -52,11 +51,27 @@ void InitGame(HWND hWndTop, HWND hWndBottom)
         if( !gRenderers[1]->Init(hWndBottom, false) )
             gRenderers[1] = 0;
     }
-
+    
+    RECT rect;
+    GetWindowRect(hWndTop, &rect);
+    Box viewport;
+    viewport.mMin.Set((float)rect.left, (float)rect.top, 0.1f);
+    viewport.mMax.Set((float)rect.right, (float)rect.bottom, 50000.0f);
+    
+    Matrix4x4 perspective;
+    perspective.SetPerspective((float)rect.right - rect.left, (float)rect.bottom - rect.top, 0.1f, 50000.0f, true);
+    
+    Matrix4x4 view;
+    view.SetLook(Vector3(0.0f, 0.0f, -10.0f), Vector3(0, 0, 0), Vector3(0.0f, 1.0f, 0.0f));
+   
     for( int i = 0; i < NUM_RENDERERS; i++ )
     {
         if( gRenderers[i] )
-        {
+        {            
+            gRenderers[i]->SetViewport(viewport);
+            gRenderers[i]->SetProjectionMatrix(perspective);
+            gRenderers[i]->SetViewMatrix(view);
+
             gCubes[i] = Shapes::CreateCube(gRenderers[i], gMaterials[i]);
         }
     }
@@ -76,11 +91,7 @@ void DoFrame()
     for( int i = 0; i < NUM_RENDERERS; i++ )
     {
         if( gRenderers[i] )
-        {
-            //gRenderers[i]->SetViewMatrix(gViewMatrix);
-            //gRenderers[i]->SetProjectionMatrix(gProjectionMatrix);
-
-			
+        {			
             RGBA clearColor(0.5f, 0.5f, 0.5f, 1.0f);
             gRenderers[i]->Clear(true, clearColor);
 
