@@ -128,9 +128,12 @@ void RendererD3D::Clear(bool bClearColor, const RGBA& color, bool bClearDepth, f
 ID3DXBuffer* RendererD3D::CompileShader(void* shaderData, uint shaderDataSize, const char* entryPoint, const char* shaderProfile)
 {    
     ID3DXBuffer* d3dshader = 0;
-    HRESULT res = D3DXCompileShader((const char*)shaderData, shaderDataSize, 0, 0, entryPoint, shaderProfile, 0, &d3dshader, 0, 0);
+	ID3DXBuffer* errors = 0;
+    HRESULT res = D3DXCompileShader((const char*)shaderData, shaderDataSize, 0, 0, entryPoint, shaderProfile, 0, &d3dshader, &errors, 0);
     if( res == D3D_OK )
         return d3dshader;
+
+	OutputDebugString((const char*)errors->GetBufferPointer());
 
     return 0;
 }

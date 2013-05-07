@@ -72,7 +72,7 @@ void InitGame(HWND hWndTop, HWND hWndBottom)
             gRenderers[i]->SetProjectionMatrix(perspective);
             gRenderers[i]->SetViewMatrix(view);
 
-            gCubes[i] = Shapes::CreateCube(gRenderers[i], gMaterials[i]);
+			gCubes[i] = Shapes::CreateCube(gRenderers[i], gMaterials[i]);
         }
     }
 }

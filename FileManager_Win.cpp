@@ -15,7 +15,8 @@ File* FileManager::LoadFile(const char* fileName)
     void* dataBuffer = malloc(size);
 
     File* file = 0;
-    if( ReadFile(hFile, dataBuffer, size, 0, 0) )
+	DWORD bytesRead = 0;
+    if( ReadFile(hFile, dataBuffer, size, &bytesRead, 0) )
     {
         file = new File(dataBuffer, size);
     }

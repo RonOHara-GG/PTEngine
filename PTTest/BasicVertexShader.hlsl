@@ -18,7 +18,7 @@ struct VS_OUTPUT
 float4x4 WorldViewProj : register(c0);
 
 
-VS_OUTPUT vs_main( in VS_INPUT In )
+VS_OUTPUT vsmain( in VS_INPUT In )
 {
     VS_OUTPUT Out;
 

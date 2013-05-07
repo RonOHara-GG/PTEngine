@@ -8,9 +8,6 @@
 
 Mesh* Shapes::CreateCube(Renderer* renderer, Material* material)
 {
-    Mesh* mesh = new Mesh(renderer);
-    Submesh* submesh = new Submesh(Renderer::ePT_Triangles, 12);
-    mesh->AddSubmesh(submesh);
 
     VertexFormat format;
     int positionOffset = format.Add(VertexFormat::eVU_Position, VertexFormat::eVET_Float3);
@@ -18,7 +15,17 @@ Mesh* Shapes::CreateCube(Renderer* renderer, Material* material)
     int uvOffset = format.Add(VertexFormat::eVU_UV0, VertexFormat::eVET_Float2);
     
     VertexBuffer* verts = renderer->CreateVertexBuffer(24, format);
+	if( !verts )
+		return 0;
     IndexBuffer* indices = renderer->CreateIndexBuffer(Renderer::GetPrimitiveIndexCount(12, Renderer::ePT_Triangles));
+	if( !indices )
+	{
+		delete verts;
+		return 0;
+	}
+    Mesh* mesh = new Mesh(renderer);
+    Submesh* submesh = new Submesh(Renderer::ePT_Triangles, 12);
+    mesh->AddSubmesh(submesh);
     submesh->AddVertexBuffer(verts);
     submesh->SetIndexBuffer(indices);
     submesh->CreateVertexProfile(renderer);
