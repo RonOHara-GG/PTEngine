@@ -24,7 +24,7 @@ Mesh* Shapes::CreateCube(Renderer* renderer, Material* material)
 		return 0;
 	}
     Mesh* mesh = new Mesh(renderer);
-    Submesh* submesh = new Submesh(Renderer::ePT_Triangles, 12);
+    Submesh* submesh = new Submesh(Renderer::ePT_Triangles, 12, 24);
     mesh->AddSubmesh(submesh);
     submesh->AddVertexBuffer(verts);
     submesh->SetIndexBuffer(indices);
@@ -197,6 +197,9 @@ Mesh* Shapes::CreateCube(Renderer* renderer, Material* material)
     indices->Set(index++, vertex - 1);
     indices->Set(index++, vertex - 3);
     indices->Set(index++, vertex - 2);
+
+    verts->Unlock();
+    indices->Unlock();
 
     return mesh;
 }

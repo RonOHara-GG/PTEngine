@@ -16,11 +16,11 @@ public:
     virtual void SetVertexElement(int vertexIndex, int elementOffset, int elementSize, void* elementData) = 0;
 
     virtual void* GetBuffer() = 0;
-    virtual int GetVertexSize() = 0;
-    virtual const VertexFormat& GetVertexFormat() const = 0;
+    virtual int GetVertexSize()                             { return mVertexFormat.GetSize(); }
+    virtual const VertexFormat& GetVertexFormat() const     { return mVertexFormat; }
     
 protected:
-
+    VertexFormat            mVertexFormat;
 };
 
 #endif // _VERTEX_BUFFER_H_

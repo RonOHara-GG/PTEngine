@@ -28,7 +28,7 @@ public:
 public:
     virtual ~Renderer() {};
 
-    virtual bool Init(void* window, bool fullScreen) = 0;
+    virtual bool Init(void* window, int width, int height, bool fullScreen) = 0;
     virtual void Shutdown() = 0;
 
     virtual void BeginFrame() = 0;
@@ -53,7 +53,9 @@ public:
     virtual VertexProfile* SetVertexProfile(VertexProfile* profile) = 0;
     virtual VertexBuffer* SetVertexBuffer(uint index, VertexBuffer* vertexBuffer) = 0;
     virtual IndexBuffer* SetIndexBuffer(IndexBuffer* indexBuffer) = 0;
-        
+    
+    virtual void Draw(int primitiveCount, ePrimitiveType primitiveType) = 0;    
+    virtual void DrawIndexed(int vertexCount, int primitiveCount, ePrimitiveType primitiveType) = 0;
 
     static int GetPrimitiveIndexCount(int primitiveCount, ePrimitiveType primitiveType);
 

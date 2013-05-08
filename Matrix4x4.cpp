@@ -50,3 +50,14 @@ void Matrix4x4::SetLook(const Vector3& eyePosition, const Vector3& lookAt, const
     if( leftHanded )
         mD.Set(-mD.mX, -mD.mY, -mD.mZ, mD.mW);
 }
+
+void Matrix4x4::SetRotationY(float angleRadians)
+{
+    float c = cosf(angleRadians);
+    float s = sinf(angleRadians);
+    SetIdentity();
+    mA.mX = c; 
+    mA.mZ = -s;
+    mC.mX = s;
+    mC.mZ = c;
+}

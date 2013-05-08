@@ -44,6 +44,9 @@ ROGLPlugin::~ROGLPlugin(void)
 
 bool ROGLPlugin::Init()
 {
+    if( !PlatformInit() )
+        return false;
+
     AddModule(Plugin::eMT_Renderer, "OpenGL", new RendererOGL());
 
     return true;

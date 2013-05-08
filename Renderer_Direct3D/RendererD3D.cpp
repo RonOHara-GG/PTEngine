@@ -11,6 +11,8 @@
 #pragma comment (lib, "d3d9.lib")
 #pragma comment (lib, "d3dx9.lib")
 
+D3DPRIMITIVETYPE sD3DPrimTypes[] = { D3DPT_TRIANGLELIST, D3DPT_TRIANGLESTRIP, D3DPT_TRIANGLEFAN, D3DPT_LINELIST };
+
 RendererD3D::RendererD3D(void)
 {
     mDevice = 0;
@@ -30,7 +32,7 @@ RendererD3D::~RendererD3D(void)
     }
 }
 
-bool RendererD3D::Init(void* window, bool fullScreen)
+bool RendererD3D::Init(void* window, int width, int height, bool fullScreen)
 {
     IDirect3D9* d3d = Direct3DCreate9(D3D_SDK_VERSION);
 
@@ -39,9 +41,15 @@ bool RendererD3D::Init(void* window, bool fullScreen)
     presentParams.Windowed = fullScreen ? FALSE : TRUE;
     presentParams.SwapEffect = D3DSWAPEFFECT_DISCARD;
     presentParams.hDeviceWindow = (HWND)window;
+    presentParams.BackBufferFormat = D3DFMT_X8R8G8B8;
+    presentParams.BackBufferWidth = width;
+    presentParams.BackBufferHeight = height;
+    presentParams.EnableAutoDepthStencil = TRUE;
+    presentParams.AutoDepthStencilFormat = D3DFMT_D24S8;
 
     d3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &mDeviceCaps);
-    if( d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, (HWND)window, D3DCREATE_HARDWARE_VERTEXPROCESSING, &presentParams, &mDevice) != D3D_OK )
+    HRESULT res = d3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, (HWND)window, D3DCREATE_HARDWARE_VERTEXPROCESSING, &presentParams, &mDevice);
+    if( res != D3D_OK )
         return false;
     
     mCurrentVertexBuffers = (VertexBuffer**)malloc(sizeof(VertexBuffer*) * mDeviceCaps.MaxStreams);
@@ -113,8 +121,8 @@ void RendererD3D::Clear(bool bClearColor, const RGBA& color, bool bClearDepth, f
 {
     DWORD flags = 0;
     flags |= (bClearColor) ? D3DCLEAR_TARGET : 0;
-    //flags |= (bClearDepth) ? D3DCLEAR_ZBUFFER : 0;
-    //flags |= (bClearStencil) ? D3DCLEAR_STENCIL : 0;
+    flags |= (bClearDepth) ? D3DCLEAR_ZBUFFER : 0;
+    flags |= (bClearStencil) ? D3DCLEAR_STENCIL : 0;
 
     int a = (int)(color.mAlpha * 255);
     int r = (int)(color.mRed * 255);
@@ -227,6 +235,10 @@ VertexProfile* RendererD3D::CreateVertexProfile(const DynamicArray<VertexBuffer*
                             offset += 16;
                             element->Type = D3DDECLTYPE_FLOAT4;
                             break;
+                        case VertexFormat::eVET_UInt:
+                            offset += 4;
+                            element->Type = D3DDECLTYPE_D3DCOLOR;
+                            break;
                     }
 
                     switch( vertElement.mUsage )
@@ -241,6 +253,10 @@ VertexProfile* RendererD3D::CreateVertexProfile(const DynamicArray<VertexBuffer*
                             break;
                         case VertexFormat::eVU_UV0:
                             element->Usage = D3DDECLUSAGE_TEXCOORD;
+                            element->UsageIndex = 0;
+                            break;
+                        case VertexFormat::eVU_Color:
+                            element->Usage = D3DDECLUSAGE_COLOR;
                             element->UsageIndex = 0;
                             break;
                     }
@@ -308,9 +324,15 @@ Material* RendererD3D::SetMaterial(Material* material, const Matrix4x4& ltw)
 
     Matrix4x4 wvp = ltw * mViewProjectionMatrix;
     mDevice->SetVertexShaderConstantF(0, wvp, 4);
+    mDevice->SetVertexShaderConstantF(4, ltw, 4);
 
     PixelShaderD3D9* ps = (PixelShaderD3D9*)material->GetPixelShader();
     mDevice->SetPixelShader(ps->GetShader());
+
+    Vector4 lightDir(1, 1, 0);
+    Vector3* ld = (Vector3*)&lightDir;
+    ld->Normalize();
+    mDevice->SetPixelShaderConstantF(0, &lightDir.mX, 1);
 
     return old;
 }
@@ -344,4 +366,13 @@ IndexBuffer* RendererD3D::SetIndexBuffer(IndexBuffer* ib)
     mDevice->SetIndices((IDirect3DIndexBuffer9*)ib->GetBuffer());
     mCurrentIndexBuffer = ib;
     return existing;
+}
+
+void RendererD3D::Draw(int primitiveCount, ePrimitiveType primitiveType)
+{
+}
+
+void RendererD3D::DrawIndexed(int vertexCount, int primitiveCount, ePrimitiveType primitiveType)
+{
+    mDevice->DrawIndexedPrimitive(sD3DPrimTypes[primitiveType], 0, 0, vertexCount, 0, primitiveCount);
 }

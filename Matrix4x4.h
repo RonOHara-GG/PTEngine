@@ -19,6 +19,8 @@ public:
     void SetPerspectiveFov(float fovY, float aspectRatio, float near, float far, bool leftHanded = true);
     void SetLook(const Vector3& eyePosition, const Vector3& lookAt, const Vector3& upDirection, bool leftHanded = true);
 
+    void SetRotationY(float angleRadians);
+
 public:
     Vector4 mA;
     Vector4 mB;

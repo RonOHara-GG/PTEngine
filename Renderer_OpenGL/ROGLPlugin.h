@@ -10,6 +10,9 @@ public:
     ~ROGLPlugin(void);
 
     bool Init();
+
+private:
+    bool PlatformInit();
 };
 
 #endif // _ROGL_PLUGIN_H_

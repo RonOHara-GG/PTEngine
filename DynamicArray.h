@@ -114,7 +114,7 @@ inline void DynamicArrayBase::Set(int index, void* item)
 
 inline void* DynamicArrayBase::Get(int index) const
 {
-    ASSERT(index >= mCount && index < mAllocatedCount && index >= 0);
+    ASSERT(index < mCount && index < mAllocatedCount && index >= 0);
 
     char* itemPtr = (char*)mData + (index * mItemSize);
     return itemPtr;

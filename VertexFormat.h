@@ -8,6 +8,7 @@ public:
     {
         eVU_Position,
         eVU_Normal,
+        eVU_Color,
         eVU_UV0,
     };
     enum VertexElementType
@@ -15,7 +16,8 @@ public:
         eVET_Float,
         eVET_Float2,
         eVET_Float3,
-        eVET_Float4
+        eVET_Float4,
+        eVET_UInt,
     };
 
     struct VertexElement
@@ -61,6 +63,9 @@ inline int VertexFormat::GetDataSizeOfType(VertexElementType type)
             break;
         case eVET_Float4:
             size += 16;
+            break;
+        case eVET_UInt:
+            size += 4;
             break;
     }
     return size;

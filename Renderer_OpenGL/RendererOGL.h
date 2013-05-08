@@ -6,6 +6,7 @@
 #undef free
 
 #include <Windows.h>
+#include "gl.h"
 
 class RendererOGL : Renderer
 {
@@ -13,7 +14,7 @@ public:
     RendererOGL(void);
     ~RendererOGL(void);
 
-    virtual bool Init(void* window, bool fullScreen);
+    virtual bool Init(void* window, int width, int height, bool fullScreen);
     virtual void Shutdown();
 
     virtual void BeginFrame();
@@ -38,6 +39,9 @@ public:
     virtual VertexProfile* SetVertexProfile(VertexProfile* profile);
     virtual VertexBuffer* SetVertexBuffer(uint index, VertexBuffer* vertexBuffer);
     virtual IndexBuffer* SetIndexBuffer(IndexBuffer* indexBuffer);
+
+    virtual void Draw(int primitiveCount, ePrimitiveType primitiveType);
+    virtual void DrawIndexed(int vertexCount, int primitiveCount, ePrimitiveType primitiveType);
 
 private:
 	HWND	mWindow;

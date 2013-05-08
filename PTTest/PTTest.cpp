@@ -52,16 +52,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     InitGame(hTopWindow, hBottomWindow);
 
 	// Main message loop:
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
+    while( 1 )
+    {
+	    while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
 
+        if(msg.message == WM_QUIT)
+            break;
+        
         DoFrame();
-	}
+    }
 
     ShutdownGame();
 

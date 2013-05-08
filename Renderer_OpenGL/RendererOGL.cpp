@@ -1,9 +1,7 @@
 #include "..\PTEngine.h"
 #include "RendererOGL.h"
-
-#include <gl\GL.h>
-
-#pragma comment (lib, "OpenGL32.lib")
+#include "VertexBufferOGL.h"
+#include "gl.h"
 
 RendererOGL::RendererOGL(void)
 {
@@ -17,7 +15,7 @@ RendererOGL::~RendererOGL(void)
 	ReleaseDC(mWindow, mDeviceContext);
 }
 
-bool RendererOGL::Init(void* window, bool fullScreen)
+bool RendererOGL::Init(void* window, int width, int height, bool fullScreen)
 {
 	static	PIXELFORMATDESCRIPTOR pfd=	
 	{
@@ -123,7 +121,8 @@ VertexProfile* RendererOGL::CreateVertexProfile(const DynamicArray<VertexBuffer*
 
 VertexBuffer* RendererOGL::CreateVertexBuffer(int vertexCount, const VertexFormat& format, bool dynamic)
 {
-    return 0;
+    VertexBufferOGL* vb = new VertexBufferOGL(vertexCount, format);
+    return vb;
 }
 
 IndexBuffer* RendererOGL::CreateIndexBuffer(int indexCount, bool sixteenBit)
@@ -149,4 +148,12 @@ VertexBuffer* RendererOGL::SetVertexBuffer(uint index, VertexBuffer* vertexBuffe
 IndexBuffer* RendererOGL::SetIndexBuffer(IndexBuffer* indexBuffer)
 {
     return 0;
+}
+
+void RendererOGL::Draw(int primitiveCount, ePrimitiveType primitiveType)
+{
+}
+
+void RendererOGL::DrawIndexed(int vertexCount, int primitiveCount, ePrimitiveType primitiveType)
+{
 }

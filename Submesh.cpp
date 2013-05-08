@@ -6,12 +6,13 @@
 #include "Material.h"
 
 
-Submesh::Submesh(Renderer::ePrimitiveType primType, int primCount, int numVertexBuffers) : mVertexBuffers(numVertexBuffers)
+Submesh::Submesh(Renderer::ePrimitiveType primType, int primCount, int vertexCount, int numVertexBuffers) : mVertexBuffers(numVertexBuffers)
 {
     mIndexBuffer = 0;
     mMaterial = 0;
     mPrimitiveType = primType;
     mPrimitiveCount = primCount;
+    mVertexCount = vertexCount;
     mVertexProfile = 0;
 }
 
@@ -83,4 +84,5 @@ void Submesh::Draw(Renderer* renderer, const Matrix4x4& ltw)
     renderer->SetIndexBuffer(mIndexBuffer);
 
     // Draw the mesh
+    renderer->DrawIndexed(mVertexCount, mPrimitiveCount, mPrimitiveType);
 }

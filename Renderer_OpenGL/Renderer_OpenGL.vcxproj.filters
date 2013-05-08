@@ -3,9 +3,12 @@
   <ItemGroup>
     <ClInclude Include="ROGLPlugin.h" />
     <ClInclude Include="RendererOGL.h" />
+    <ClInclude Include="VertexBufferOGL.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ROGLPlugin.cpp" />
     <ClCompile Include="RendererOGL.cpp" />
+    <ClCompile Include="VertexBufferOGL.cpp" />
+    <ClCompile Include="ROGLPlugin_Win.cpp" />
   </ItemGroup>
 </Project>

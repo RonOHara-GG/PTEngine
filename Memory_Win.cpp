@@ -5,7 +5,7 @@
 
 #include <Windows.h>
 
-#define MEMORY_PAGE_SIZE   (512 * 1024 * 1024)    
+#define MEMORY_PAGE_SIZE   (1 * 1024 * 1024)    
 
 static HANDLE sWinHeap = 0;
 

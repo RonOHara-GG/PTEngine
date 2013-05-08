@@ -10,7 +10,7 @@ class VertexProfile;
 class Submesh : public OwnedObject
 {
 public:
-    Submesh(Renderer::ePrimitiveType primType, int primCount, int numVertexBuffers = 1);
+    Submesh(Renderer::ePrimitiveType primType, int primCount, int vertexCount, int numVertexBuffers = 1);
     virtual ~Submesh(void);
 
     void CreateVertexProfile(Renderer* renderer);
@@ -37,6 +37,7 @@ protected:
 
     Renderer::ePrimitiveType mPrimitiveType;
     int mPrimitiveCount;
+    int mVertexCount;
     Material* mMaterial;
 
 };

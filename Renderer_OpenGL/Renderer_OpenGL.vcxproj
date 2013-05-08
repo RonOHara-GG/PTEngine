@@ -76,10 +76,13 @@
   <ItemGroup>
     <ClInclude Include="RendererOGL.h" />
     <ClInclude Include="ROGLPlugin.h" />
+    <ClInclude Include="VertexBufferOGL.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RendererOGL.cpp" />
     <ClCompile Include="ROGLPlugin.cpp" />
+    <ClCompile Include="ROGLPlugin_Win.cpp" />
+    <ClCompile Include="VertexBufferOGL.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
