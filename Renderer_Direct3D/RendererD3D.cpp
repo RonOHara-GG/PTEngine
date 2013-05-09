@@ -58,6 +58,9 @@ bool RendererD3D::Init(void* window, int width, int height, bool fullScreen)
     mVertexShaderProfile = D3DXGetVertexShaderProfile(mDevice);
     mPixelShaderProfile = D3DXGetPixelShaderProfile(mDevice);
 
+    mDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+    //mDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_EQUAL);
+
     return true;
 }
 
@@ -354,7 +357,8 @@ VertexBuffer* RendererD3D::SetVertexBuffer(uint index, VertexBuffer* vb)
     if( index < mDeviceCaps.MaxStreams )
     {
         existing = mCurrentVertexBuffers[index];
-        mDevice->SetStreamSource(index, (IDirect3DVertexBuffer9*)vb->GetBuffer(), 0, vb->GetVertexSize());
+        VertexBufferD3D9* vbd3d = (VertexBufferD3D9*)vb;
+        mDevice->SetStreamSource(index, (IDirect3DVertexBuffer9*)vbd3d->GetBuffer(), 0, vb->GetVertexSize());
         mCurrentVertexBuffers[index] = vb;
     }
     return existing;
@@ -363,7 +367,8 @@ VertexBuffer* RendererD3D::SetVertexBuffer(uint index, VertexBuffer* vb)
 IndexBuffer* RendererD3D::SetIndexBuffer(IndexBuffer* ib)
 {
     IndexBuffer* existing = mCurrentIndexBuffer;
-    mDevice->SetIndices((IDirect3DIndexBuffer9*)ib->GetBuffer());
+    IndexBufferD3D9* ibd3d9 = (IndexBufferD3D9*)ib;
+    mDevice->SetIndices((IDirect3DIndexBuffer9*)ibd3d9->GetBuffer());
     mCurrentIndexBuffer = ib;
     return existing;
 }

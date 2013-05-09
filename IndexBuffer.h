@@ -11,8 +11,6 @@ public:
     
     virtual void Set(int index, uint vertex) = 0;
 
-    virtual void* GetBuffer() = 0;
-
 protected:
 
 };

@@ -24,6 +24,8 @@
     </None>
     <None Include="BasicVertexShader.hlsl" />
     <None Include="BasicPixelShader.hlsl" />
+    <None Include="BasicPixelShader.glsl" />
+    <None Include="BasicVertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

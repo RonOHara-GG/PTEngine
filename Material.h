@@ -16,9 +16,13 @@ public:
     PixelShader* SetPixelShader(PixelShader* shader);
     PixelShader* GetPixelShader()                           { return mPixelShader; }
 
+    void SetProgram(void* program)                          { mProgram = program; }
+    void* GetProgram()                                      { return mProgram; }
+
 protected:
-    VertexShader* mVertexShader;
-    PixelShader* mPixelShader;
+    VertexShader*   mVertexShader;
+    PixelShader*    mPixelShader;
+    void*           mProgram;
 };
 
 #endif // _MATERIAL_H_

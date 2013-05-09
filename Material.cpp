@@ -6,6 +6,7 @@ Material::Material(void)
 {
     mVertexShader = 0;
     mPixelShader = 0;
+    mProgram = 0;
 }
 
 

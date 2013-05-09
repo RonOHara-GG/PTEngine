@@ -19,7 +19,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -74,14 +74,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="gl.h" />
+    <ClInclude Include="glBind.h" />
+    <ClInclude Include="glCoreFunctions.h" />
+    <ClInclude Include="glDefines.h" />
+    <ClInclude Include="glExtFunctions.h" />
+    <ClInclude Include="IndexBufferOGL.h" />
     <ClInclude Include="RendererOGL.h" />
     <ClInclude Include="ROGLPlugin.h" />
     <ClInclude Include="VertexBufferOGL.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IndexBufferOGL.cpp" />
     <ClCompile Include="RendererOGL.cpp" />
+    <ClCompile Include="RendererOGL_Win.cpp" />
     <ClCompile Include="ROGLPlugin.cpp" />
-    <ClCompile Include="ROGLPlugin_Win.cpp" />
     <ClCompile Include="VertexBufferOGL.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

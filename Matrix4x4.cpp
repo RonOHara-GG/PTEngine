@@ -46,9 +46,7 @@ void Matrix4x4::SetLook(const Vector3& eyePosition, const Vector3& lookAt, const
     mA.Set(xaxis.mX, yaxis.mX, zaxis.mX, 0.0f);
     mB.Set(xaxis.mY, yaxis.mY, zaxis.mY, 0.0f);
     mC.Set(xaxis.mZ, yaxis.mZ, zaxis.mZ, 0.0f);    
-    mD.Set(xaxis.Dot(eyePosition), yaxis.Dot(eyePosition), zaxis.Dot(eyePosition), 1.0f);
-    if( leftHanded )
-        mD.Set(-mD.mX, -mD.mY, -mD.mZ, mD.mW);
+    mD.Set(-xaxis.Dot(eyePosition), -yaxis.Dot(eyePosition), -zaxis.Dot(eyePosition), 1.0f);
 }
 
 void Matrix4x4::SetRotationY(float angleRadians)

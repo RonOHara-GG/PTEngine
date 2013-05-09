@@ -9,6 +9,10 @@
 #include "..\Mesh.h"
 #include "..\Material.h"
 
+const char* gVSFiles[2] = {"BasicVertexShader.hlsl", "BasicVertexShader.glsl"};
+const char* gPSFiles[2] = {"BasicPixelShader.hlsl", "BasicPixelShader.glsl"};
+HWND gWindows[2];
+
 Material* gMaterials[2] = {0,0};
 Mesh* gCubes[2] = {0, 0};
 Renderer* gRenderers[2] = {0, 0};
@@ -29,52 +33,47 @@ void InitGame(HWND hWndTop, HWND hWndBottom)
     int height = rect.bottom - rect.top;
 
     gRenderers[0] = PLUGIN_MANAGER->GetRenderer("Direct3D");
-    if( gRenderers[0] )
-    {
-        if( !gRenderers[0]->Init(hWndTop, width, height, false) )
-        {
-            gRenderers[0] = 0;
-        }
-        else
-        {            
-            gMaterials[0] = new Material();
-            File* vertexShaderFile = FILE_MANAGER->LoadFile("BasicVertexShader.hlsl");
-            File* pixelShaderFile = FILE_MANAGER->LoadFile("BasicPixelShader.hlsl");
-
-            VertexShader* vs = gRenderers[0]->CreateVertexShader(vertexShaderFile->GetData(), vertexShaderFile->GetSize());
-            gMaterials[0]->SetVertexShader(vs);
-
-            PixelShader* ps = gRenderers[0]->CreatePixelShader(pixelShaderFile->GetData(), pixelShaderFile->GetSize());
-            gMaterials[0]->SetPixelShader(ps);
-        }
-    }
-
     gRenderers[1] = PLUGIN_MANAGER->GetRenderer("OpenGL");
-    if( gRenderers[1] )
-    {
-        if( !gRenderers[1]->Init(hWndBottom, width, height, false) )
-            gRenderers[1] = 0;
-    }
+    gWindows[0] = hWndTop;
+    gWindows[1] = hWndBottom;
     
     Box viewport;
     viewport.mMin.Set(0, 0, 0.1f);
     viewport.mMax.Set((float)width, (float)height, 50000.0f);
     
     Matrix4x4 perspective;
-    perspective.SetPerspectiveFov(DEGREES_TO_RADIANS(45), (float)width / (float)height, 1.0f, 100.0f);
+    perspective.SetPerspectiveFov(DEGREES_TO_RADIANS(45), (float)width / (float)height, 1.0f, 10.0f);
     
     Matrix4x4 view;
-    view.SetLook(Vector3(0.0f, 2.0f, -10.0f), Vector3(0, 0, 1), Vector3(0.0f, 1.0f, 0.0f));
+    view.SetLook(Vector3(0.0f, 3.0f, 5.0f), Vector3(0, 0, 0), Vector3(0.0f, 1.0f, 0.0f));
    
     for( int i = 0; i < NUM_RENDERERS; i++ )
     {
         if( gRenderers[i] )
-        {            
-            gRenderers[i]->SetViewport(viewport);
-            gRenderers[i]->SetProjectionMatrix(perspective);
-            gRenderers[i]->SetViewMatrix(view);
+        {
+            if( gRenderers[i]->Init(gWindows[i], width, height, false) )
+            {
+                gRenderers[i]->SetViewport(viewport);
+                gRenderers[i]->SetProjectionMatrix(perspective);
+                gRenderers[i]->SetViewMatrix(view);
 
-			gCubes[i] = Shapes::CreateCube(gRenderers[i], gMaterials[i]);
+
+                gMaterials[i] = new Material();
+                File* vertexShaderFile = FILE_MANAGER->LoadFile(gVSFiles[i]);
+                File* pixelShaderFile = FILE_MANAGER->LoadFile(gPSFiles[i]);
+
+                VertexShader* vs = gRenderers[i]->CreateVertexShader(vertexShaderFile->GetData(), vertexShaderFile->GetSize());
+                PixelShader* ps = gRenderers[i]->CreatePixelShader(pixelShaderFile->GetData(), pixelShaderFile->GetSize());
+                gMaterials[i]->SetVertexShader(vs);
+                gMaterials[i]->SetPixelShader(ps);
+
+                delete vertexShaderFile;
+                delete pixelShaderFile;
+
+			    gCubes[i] = Shapes::CreateCube(gRenderers[i], gMaterials[i]);
+            }
+            else
+                gRenderers[i] = 0;
         }
     }
 }
@@ -91,7 +90,7 @@ void ShutdownGame()
 void DoFrame()
 {
     Matrix4x4 localToWorld;
-    static float index = 0.0f; index+=0.05f;
+    static float index = 0.0f; index+=0.025f;
     localToWorld.SetRotationY(index);
 
     for( int i = 0; i < NUM_RENDERERS; i++ )
@@ -105,7 +104,6 @@ void DoFrame()
 
             if( gCubes[i] )
             {
-                
                 gCubes[i]->Draw(localToWorld);
             }
             

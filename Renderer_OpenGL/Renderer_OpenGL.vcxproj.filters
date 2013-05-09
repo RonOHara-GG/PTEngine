@@ -4,11 +4,18 @@
     <ClInclude Include="ROGLPlugin.h" />
     <ClInclude Include="RendererOGL.h" />
     <ClInclude Include="VertexBufferOGL.h" />
+    <ClInclude Include="IndexBufferOGL.h" />
+    <ClInclude Include="gl.h" />
+    <ClInclude Include="glBind.h" />
+    <ClInclude Include="glCoreFunctions.h" />
+    <ClInclude Include="glDefines.h" />
+    <ClInclude Include="glExtFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ROGLPlugin.cpp" />
     <ClCompile Include="RendererOGL.cpp" />
     <ClCompile Include="VertexBufferOGL.cpp" />
-    <ClCompile Include="ROGLPlugin_Win.cpp" />
+    <ClCompile Include="IndexBufferOGL.cpp" />
+    <ClCompile Include="RendererOGL_Win.cpp" />
   </ItemGroup>
 </Project>

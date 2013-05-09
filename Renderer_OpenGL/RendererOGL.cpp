@@ -1,60 +1,36 @@
 #include "..\PTEngine.h"
+#include "..\Material.h"
 #include "RendererOGL.h"
 #include "VertexBufferOGL.h"
-#include "gl.h"
+#include "IndexBufferOGL.h"
+
+#define ATTRIB_POSITION     0
+#define ATTRIB_NORMAL       1
+#define ATTRIB_COLOR        2
+#define ATTRIB_UV0          3
+
+GLenum sOGLPrimTypes[] = { GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_LINES };
 
 RendererOGL::RendererOGL(void)
 {
-	mDeviceContext = 0;
-	mRenderContext = 0;
+    mCurrentIndexBuffer = 0;
+    mCurrentMaterial = 0;
 }
 
 RendererOGL::~RendererOGL(void)
 {
-	wglDeleteContext(mRenderContext);
-	ReleaseDC(mWindow, mDeviceContext);
+	PlatformShutdown();
 }
 
 bool RendererOGL::Init(void* window, int width, int height, bool fullScreen)
 {
-	static	PIXELFORMATDESCRIPTOR pfd=	
-	{
-		sizeof(PIXELFORMATDESCRIPTOR),	1,								
-		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,	
-		PFD_TYPE_RGBA,
-		32,											
-		0, 0, 0, 0, 0, 0, 0, 0,	0, 0, 0, 0, 0, 24, 0, 0,
-		PFD_MAIN_PLANE,
-		0, 0, 0, 0
-	};
-
-	mWindow = (HWND)window;
-
-	mDeviceContext = GetDC(mWindow);
-	if( mDeviceContext == 0 )
-		return false;
-
-	GLuint pixelFormat = ChoosePixelFormat(mDeviceContext, &pfd);
-	if( !pixelFormat )
-		return false;
-
-	if( !SetPixelFormat(mDeviceContext, pixelFormat, &pfd) )
-		return false;
-
-	mRenderContext = wglCreateContext(mDeviceContext);
-	DWORD err = GetLastError();
-	if( mRenderContext == 0 )
-		return false;
-
-	if( !wglMakeCurrent(mDeviceContext, mRenderContext) )
-	{
-		wglDeleteContext(mRenderContext);
-		mRenderContext = 0;
-		return false;
-	}
+    if( !PlatformInit(window, width, height, fullScreen) )
+        return false;
 
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_DEPTH);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_CW);
 	
     return true;
 }
@@ -73,25 +49,48 @@ void RendererOGL::EndFrame()
 
 void RendererOGL::FinishFrame()
 {
-	SwapBuffers(mDeviceContext);
+    PlatformFinishFrame();
 }
 
 void RendererOGL::SetViewport(const Box& viewSpace)
 {
+    mCurrentViewport = viewSpace;
+    glViewport((GLint)viewSpace.mMin.mX, (GLint)viewSpace.mMin.mY, (GLsizei)viewSpace.mMax.mX, (GLsizei)viewSpace.mMax.mY);
 }
 
-Box temp;
 const Box& RendererOGL::GetViewport()
 {
-    return temp;
+    return mCurrentViewport;
 }
 
 void RendererOGL::SetViewMatrix(const Matrix4x4& view)
 {
+    mViewMatrix = view;
+    UpdateViewProjection();
 }
 
+#undef malloc
+#undef free
+#include <Windows.h>
+#include <gl/GLU.h>
+#pragma comment (lib, "Glu32.lib")
 void RendererOGL::SetProjectionMatrix(const Matrix4x4& projection)
 {
+    glMatrixMode(GL_PROJECTION);
+    gluPerspective(45, 853.0f / 480.0f, 0.01f, 10.0f);
+    float mtx[16];
+    glGetFloatv(GL_PROJECTION_MATRIX, mtx);
+
+    mProjectionMatrix = projection;
+    UpdateViewProjection();
+}
+
+void RendererOGL::UpdateViewProjection()
+{
+    glMatrixMode(GL_PROJECTION);
+
+    mViewProjectionMatrix = mViewMatrix * mProjectionMatrix;
+    glLoadMatrixf(mViewProjectionMatrix);
 }
 
 void RendererOGL::Clear(bool bClearColor, const RGBA& color, bool bClearDepth, float depthValue, bool bClearStencil, unsigned int stencilValue)
@@ -104,14 +103,43 @@ void RendererOGL::Clear(bool bClearColor, const RGBA& color, bool bClearDepth, f
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+bool CompileShader(GLhandleARB shader, void* shaderData, uint shaderDataSize)
+{
+    glShaderSourceARB(shader, 1, (const GLcharARB**)&shaderData, (GLint*)&shaderDataSize);
+    glCompileShader(shader);
+    GLint status;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    if( status == GL_FALSE )
+    {
+        char log[16 * 1024];
+        GLsizei length;
+        glGetShaderInfoLog(shader, sizeof(log), &length, log);
+
+        return false;
+    }
+    return true;
+}
+
 VertexShader* RendererOGL::CreateVertexShader(void* shaderData, uint shaderDataSize)
 {
-    return 0;
+    GLhandleARB vs = glCreateShaderObjectARB(GL_VERTEX_SHADER);
+    if( !CompileShader(vs, shaderData, shaderDataSize) )
+    {
+        glDeleteObjectARB(vs);
+        return 0;
+    }
+    return (VertexShader*)vs;
 }
 
 PixelShader* RendererOGL::CreatePixelShader(void* shaderData, uint shaderDataSize)
 {
-    return 0;
+    GLhandleARB ps = glCreateShaderObjectARB(GL_FRAGMENT_SHADER);
+    if( !CompileShader(ps, shaderData, shaderDataSize) )
+    {
+        glDeleteObjectARB(ps);
+        return 0;
+    }
+    return (PixelShader*)ps;
 }
 
 VertexProfile* RendererOGL::CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers)
@@ -127,12 +155,49 @@ VertexBuffer* RendererOGL::CreateVertexBuffer(int vertexCount, const VertexForma
 
 IndexBuffer* RendererOGL::CreateIndexBuffer(int indexCount, bool sixteenBit)
 {
-    return 0;
+    IndexBufferOGL* ib = new IndexBufferOGL(indexCount, sixteenBit);
+    return ib;
 }
 
 Material* RendererOGL::SetMaterial(Material* material, const Matrix4x4& ltw)
 {
-    return 0;
+    Material* old = mCurrentMaterial;
+    mCurrentMaterial = material;
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixf(ltw);
+
+    Matrix4x4 wvp = ltw * mViewProjectionMatrix;
+
+    void* program = material->GetProgram();
+    if( !program )
+    {
+        GLhandleARB prg = glCreateProgramObjectARB();
+        glAttachObjectARB(prg, (GLhandleARB)material->GetVertexShader());
+        glAttachObjectARB(prg, (GLhandleARB)material->GetPixelShader());
+        glLinkProgramARB(prg);
+        program = (void*)prg;
+        material->SetProgram(program);
+    }
+    glUseProgramObjectARB((GLhandleARB)program);
+
+    GLint loc = glGetUniformLocation((GLint)program, "WorldViewProjection");
+    glUniformMatrix4fv(loc, 1, false, wvp);
+
+    loc = glGetUniformLocation((GLint)program, "normalMatrix");
+    float normalMatrix[9] = {ltw.mA.mX, ltw.mA.mY, ltw.mA.mZ,
+                             ltw.mB.mX, ltw.mB.mY, ltw.mB.mZ,
+                             ltw.mC.mX, ltw.mC.mY, ltw.mC.mZ};
+    glUniformMatrix3fv(loc, 1, false, normalMatrix);
+
+
+    Vector3 lightDir(1, 1, 0);
+    lightDir.Normalize();
+    loc = glGetUniformLocation((GLint)program, "lightDir");
+    glUniform3f(loc, lightDir.mX, lightDir.mY, lightDir.mZ);
+
+
+    return old;
 }
 
 VertexProfile* RendererOGL::SetVertexProfile(VertexProfile* profile)
@@ -140,14 +205,56 @@ VertexProfile* RendererOGL::SetVertexProfile(VertexProfile* profile)
     return 0;
 }
 
+VertexBufferOGL* sVB = 0;
 VertexBuffer* RendererOGL::SetVertexBuffer(uint index, VertexBuffer* vertexBuffer)
 {
+    uint bufferName = 0;
+    VertexBufferOGL* vb = (VertexBufferOGL*)vertexBuffer;
+    if( vb )
+        bufferName = vb->GetBufferName();
+    sVB = vb;
+    
+    glBindBuffer(GL_ARRAY_BUFFER, bufferName);
+    if( vb )
+    {
+        int offset = 0;
+        const VertexFormat& format = vb->GetVertexFormat();
+        for( int i = 0; i < format.GetElementCount(); i++ )
+        {
+            const VertexFormat::VertexElement& element = format.GetElement(i);
+            GLint location = -1;
+            switch( element.mUsage )
+            {
+                case VertexFormat::eVU_Position:
+                    location = glGetAttribLocation((GLuint)mCurrentMaterial->GetProgram(), "InPosition");;
+                    break;
+                case VertexFormat::eVU_Normal:
+                    location = glGetAttribLocation((GLuint)mCurrentMaterial->GetProgram(), "InNormal");
+                    break;
+            }
+            if( location >= 0 )
+            {
+                glEnableVertexAttribArray(location);
+                glVertexAttribPointer(location, VertexFormat::GetDataSizeOfType(element.mType) / 4, GL_FLOAT, GL_FALSE, format.GetSize(), (const GLvoid*)offset);   
+            }
+            offset += VertexFormat::GetDataSizeOfType(element.mType);
+        }
+    }
     return 0;
 }
 
 IndexBuffer* RendererOGL::SetIndexBuffer(IndexBuffer* indexBuffer)
 {
-    return 0;
+    IndexBuffer* current = mCurrentIndexBuffer;
+
+    uint name = 0;
+    IndexBufferOGL* ib = (IndexBufferOGL*)indexBuffer;
+    if( ib )
+        name = ib->GetBufferName();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, name);
+
+    mCurrentIndexBuffer = ib;
+    return current;
 }
 
 void RendererOGL::Draw(int primitiveCount, ePrimitiveType primitiveType)
@@ -156,4 +263,5 @@ void RendererOGL::Draw(int primitiveCount, ePrimitiveType primitiveType)
 
 void RendererOGL::DrawIndexed(int vertexCount, int primitiveCount, ePrimitiveType primitiveType)
 {
+    glDrawElements(sOGLPrimTypes[primitiveType], mCurrentIndexBuffer->GetIndexCount(), mCurrentIndexBuffer->IsSixteenBit() ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, 0);
 }

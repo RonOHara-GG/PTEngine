@@ -16,11 +16,13 @@
 #include "glExtFunctions.h"
 #undef GL_FUNCTION
 
+typedef void* (*FindFunction)(const char* functionName);
+
 // bind funciton pointers
-inline void glBind(DynamicLibrary* dll)
+inline void glBind(FindFunction findFunction)
 {
-#define GL_FUNCTION(funcName, returnType, args)  funcName = (pfn##funcName)dll->FindFunction(#funcName);
-    
+#define GL_FUNCTION(funcName, returnType, args)  funcName = (pfn##funcName)findFunction(#funcName);
+        
     // Bind all the core functions
     #include "glCoreFunctions.h"
     

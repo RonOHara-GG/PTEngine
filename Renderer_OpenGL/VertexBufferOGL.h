@@ -14,11 +14,13 @@ public:
 
     virtual void SetVertexElement(int vertexIndex, int elementOffset, int elementSize, void* elementData);
 
-    virtual void* GetBuffer();
-
+    uint GetBufferName()     { return mGLBufferName; }
+    
 protected:
     int mVertexCount;
     uint mGLBufferName;
+
+    void* mLockData;
 };
 
 #endif // _VERTEX_BUFFER_OGL_H_

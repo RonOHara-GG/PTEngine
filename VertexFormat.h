@@ -6,7 +6,7 @@ class VertexFormat
 public:
     enum VertexUsage
     {
-        eVU_Position,
+        eVU_Position = 0,
         eVU_Normal,
         eVU_Color,
         eVU_UV0,

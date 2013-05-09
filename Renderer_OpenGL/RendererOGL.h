@@ -2,11 +2,9 @@
 #define _RENDERER_OGL_H_
 
 #include "..\Renderer.h"
-#undef malloc
-#undef free
-
-#include <Windows.h>
 #include "gl.h"
+
+class IndexBufferOGL;
 
 class RendererOGL : Renderer
 {
@@ -44,9 +42,20 @@ public:
     virtual void DrawIndexed(int vertexCount, int primitiveCount, ePrimitiveType primitiveType);
 
 private:
-	HWND	mWindow;
-	HDC		mDeviceContext;
-	HGLRC	mRenderContext;
+    bool PlatformInit(void* window, int width, int height, bool fullScreen);
+    void PlatformShutdown();
+    void PlatformFinishFrame();
+
+    void UpdateViewProjection();
+
+private:
+    IndexBufferOGL*             mCurrentIndexBuffer;
+    Material*                   mCurrentMaterial;
+    Box                         mCurrentViewport;
+
+    Matrix4x4                   mViewMatrix;
+    Matrix4x4                   mProjectionMatrix;
+    Matrix4x4                   mViewProjectionMatrix;
 };
 
 #endif // _RENDERER_OGL_H_
