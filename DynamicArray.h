@@ -155,7 +155,7 @@ template<class T>
 inline T& DynamicArray<T>::Get(int index)
 {
     void* itemPtr = DynamicArrayBase::Get(index);
-    return (T&)itemPtr;
+    return *(T*)itemPtr;
 }
 
 template<class T>

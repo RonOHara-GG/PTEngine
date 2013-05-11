@@ -31,6 +31,9 @@
     <ClInclude Include="File.h" />
     <ClInclude Include="VertexShader.h" />
     <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="SpriteTexture.h" />
+    <ClInclude Include="DDS.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp" />
@@ -50,6 +53,7 @@
     <ClCompile Include="File.cpp" />
     <ClCompile Include="FileManager_Win.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
+    <ClCompile Include="SpriteTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FutureFeatures.txt" />

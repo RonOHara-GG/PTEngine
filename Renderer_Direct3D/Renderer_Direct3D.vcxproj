@@ -84,6 +84,7 @@
     <ClInclude Include="PixelShaderD3D9.h" />
     <ClInclude Include="RD3DPlugin.h" />
     <ClInclude Include="RendererD3D.h" />
+    <ClInclude Include="TextureD3D9.h" />
     <ClInclude Include="VertexBufferD3D9.h" />
     <ClInclude Include="VertexProfileD3D.h" />
     <ClInclude Include="VertexShaderD3D9.h" />
@@ -93,6 +94,7 @@
     <ClCompile Include="PixelShaderD3D9.cpp" />
     <ClCompile Include="RD3DPlugin.cpp" />
     <ClCompile Include="RendererD3D.cpp" />
+    <ClCompile Include="TextureD3D9.cpp" />
     <ClCompile Include="VertexBufferD3D9.cpp" />
     <ClCompile Include="VertexProfileD3D.cpp" />
     <ClCompile Include="VertexShaderD3D9.cpp" />

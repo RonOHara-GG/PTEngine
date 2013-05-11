@@ -69,19 +69,14 @@ void RendererOGL::SetViewMatrix(const Matrix4x4& view)
     UpdateViewProjection();
 }
 
-#undef malloc
-#undef free
-#include <Windows.h>
-#include <gl/GLU.h>
-#pragma comment (lib, "Glu32.lib")
 void RendererOGL::SetProjectionMatrix(const Matrix4x4& projection)
 {
-    glMatrixMode(GL_PROJECTION);
-    gluPerspective(45, 853.0f / 480.0f, 0.01f, 10.0f);
-    float mtx[16];
-    glGetFloatv(GL_PROJECTION_MATRIX, mtx);
-
     mProjectionMatrix = projection;
+    float whole = ceilf(mProjectionMatrix.mC.mZ);
+    float frac = mProjectionMatrix.mC.mZ - whole;
+    mProjectionMatrix.mC.mZ = whole + (frac * 2);
+    mProjectionMatrix.mD.mZ *= 2;
+
     UpdateViewProjection();
 }
 
@@ -142,7 +137,7 @@ PixelShader* RendererOGL::CreatePixelShader(void* shaderData, uint shaderDataSiz
     return (PixelShader*)ps;
 }
 
-VertexProfile* RendererOGL::CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers)
+VertexProfile* RendererOGL::CreateVertexProfile(const VertexBuffer** vertexBuffers, int numVertexBuffers)
 {
     return 0;
 }
@@ -157,6 +152,11 @@ IndexBuffer* RendererOGL::CreateIndexBuffer(int indexCount, bool sixteenBit)
 {
     IndexBufferOGL* ib = new IndexBufferOGL(indexCount, sixteenBit);
     return ib;
+}
+
+Texture* RendererOGL::CreateTexture(DDS* textureFile, uint dataSize)
+{
+    return 0;
 }
 
 Material* RendererOGL::SetMaterial(Material* material, const Matrix4x4& ltw)
@@ -198,6 +198,11 @@ Material* RendererOGL::SetMaterial(Material* material, const Matrix4x4& ltw)
 
 
     return old;
+}
+
+Material* RendererOGL::SetSpriteMaterial(Material* material)
+{
+    return 0;
 }
 
 VertexProfile* RendererOGL::SetVertexProfile(VertexProfile* profile)
@@ -257,11 +262,17 @@ IndexBuffer* RendererOGL::SetIndexBuffer(IndexBuffer* indexBuffer)
     return current;
 }
 
-void RendererOGL::Draw(int primitiveCount, ePrimitiveType primitiveType)
+void RendererOGL::Draw(int vertexCount, int primitiveCount, ePrimitiveType primitiveType)
 {
+    if( mCurrentIndexBuffer )
+    {
+        glDrawElements(sOGLPrimTypes[primitiveType], mCurrentIndexBuffer->GetIndexCount(), mCurrentIndexBuffer->IsSixteenBit() ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, 0);   
+    }
+    else
+    {
+    }
 }
 
-void RendererOGL::DrawIndexed(int vertexCount, int primitiveCount, ePrimitiveType primitiveType)
+void RendererOGL::DrawSprites(Texture* texture, int numSprites)
 {
-    glDrawElements(sOGLPrimTypes[primitiveType], mCurrentIndexBuffer->GetIndexCount(), mCurrentIndexBuffer->IsSixteenBit() ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, 0);
 }

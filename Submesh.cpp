@@ -51,7 +51,8 @@ void Submesh::CreateVertexProfile(Renderer* renderer)
     if( mVertexProfile )
         delete mVertexProfile;
 
-    mVertexProfile = renderer->CreateVertexProfile(mVertexBuffers);
+    VertexBuffer* ptr = mVertexBuffers.Get(0);
+    mVertexProfile = renderer->CreateVertexProfile((const VertexBuffer**)&ptr, mVertexBuffers.Count());
 }
 
 void Submesh::AddVertexBuffer(VertexBuffer* buffer, bool submeshOwnsThis)
@@ -84,5 +85,5 @@ void Submesh::Draw(Renderer* renderer, const Matrix4x4& ltw)
     renderer->SetIndexBuffer(mIndexBuffer);
 
     // Draw the mesh
-    renderer->DrawIndexed(mVertexCount, mPrimitiveCount, mPrimitiveType);
+    renderer->Draw(mVertexCount, mPrimitiveCount, mPrimitiveType);
 }

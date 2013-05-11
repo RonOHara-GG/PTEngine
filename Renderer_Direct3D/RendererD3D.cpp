@@ -7,6 +7,7 @@
 #include "IndexBufferD3D9.h"
 #include "VertexShaderD3D9.h"
 #include "PixelShaderD3D9.h"
+#include "TextureD3D9.h"
 
 #pragma comment (lib, "d3d9.lib")
 #pragma comment (lib, "d3dx9.lib")
@@ -20,6 +21,7 @@ RendererD3D::RendererD3D(void)
     mCurrentVertexProfile = 0;
     mCurrentVertexBuffers = 0;
     mCurrentMaterial = 0;
+    mSpriteMaterial = 0;
 }
 
 
@@ -189,12 +191,12 @@ PixelShader* RendererD3D::CreatePixelShader(void* shaderData, uint shaderDataSiz
     return shader;
 }
 
-VertexProfile* RendererD3D::CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers)
+VertexProfile* RendererD3D::CreateVertexProfile(const VertexBuffer** vertexBuffers, int numVertexBuffers)
 {
     VertexProfileD3D* profile = 0;
 
     int totalElements = 1;
-    for( int i = 0; i < vertexBuffers.Count(); i++ )
+    for( int i = 0; i < numVertexBuffers; i++ )
     {
         if( vertexBuffers[i] )
             totalElements += vertexBuffers[i]->GetVertexFormat().GetElementCount();
@@ -205,7 +207,7 @@ VertexProfile* RendererD3D::CreateVertexProfile(const DynamicArray<VertexBuffer*
         D3DVERTEXELEMENT9* elements = (D3DVERTEXELEMENT9*)malloc(totalElements * sizeof(D3DVERTEXELEMENT9));
 
         int elementIndex = 0;
-        for( int i = 0; i < vertexBuffers.Count(); i++ )
+        for( int i = 0; i < numVertexBuffers; i++ )
         {
             if( vertexBuffers[i] )
             {
@@ -317,6 +319,90 @@ IndexBuffer* RendererD3D::CreateIndexBuffer(int indexCount, bool sixteenBit)
     return ib;
 }
 
+Texture* RendererD3D::CreateTexture(DDS* dds, uint dataSize)
+{
+    /*
+    D3DFORMAT format = D3DFMT_UNKNOWN;
+    if( dds->HasFourCC() )
+    {
+        if( !dds->HasDDSHeader10() )
+        {
+            format = (D3DFORMAT)dds->mPixelFormat.mFourCC;
+        }
+    }
+    else if( dds->HasRGB() )
+    {
+        if( dds->HasAlphaPixels() )
+        {
+            if( dds->mPixelFormat.mRGBBitCount == 32 )
+            {
+                if( dds->mPixelFormat.mRedMask == 0x3ff00000 )
+                    format = D3DFMT_A2R10G10B10;
+                else
+                    format = D3DFMT_A8R8G8B8;
+            }
+            else // 16 bit
+            {
+                if( dds->mPixelFormat.mRedMask == 0xf00 )
+                    format = D3DFMT_A4R4G4B4;
+                else
+                    format = D3DFMT_A8R3G3B2;
+            }
+        }
+        else
+        {
+            if( dds->mPixelFormat.mRGBBitCount == 32 )
+            {
+                if( dds->mPixelFormat.mRedMask == 0xff0000 )
+                    format = D3DFMT_X8R8G8B8;
+                else
+                    format = D3DFMT_X8B8G8R8;
+            }
+            else if( dds->mPixelFormat.mRGBBitCount == 24 )
+            {
+                format = D3DFMT_R8G8B8;
+            }
+            else // 16 bit
+            {
+                if( dds->mPixelFormat.mRedMask == 0x7c00 )
+                    format = D3DFMT_X1R5G5B5;
+                else
+                    format = D3DFMT_X4R4G4B4;
+            }
+        }
+    }
+    else if( dds->HasLuminance() )
+    {
+        if( dds->mPixelFormat.mRGBBitCount == 16 )
+        {
+            if( dds->mPixelFormat.mRedMask == 0xffff )
+                format = D3DFMT_L16;
+            else
+                format = D3DFMT_A8L8;
+        }
+        else    // 8 bit
+        {
+            if( dds->mPixelFormat.mRedMask == 0xF )
+                format = D3DFMT_A4L4;
+            else
+                format = D3DFMT_L8;
+        }
+    }
+    if( format == D3DFMT_UNKNOWN )
+        return 0;
+    */
+    
+    TextureD3D9* texture = 0;
+    IDirect3DTexture9* d3dTexture = 0;
+    HRESULT res = D3DXCreateTextureFromFileInMemory(mDevice, dds, dataSize, &d3dTexture);
+    if( res == D3D_OK )
+    {
+        texture = new TextureD3D9(d3dTexture, dds);
+    }
+
+    return texture;
+}
+
 Material* RendererD3D::SetMaterial(Material* material, const Matrix4x4& ltw)
 {
     Material* old = mCurrentMaterial;
@@ -337,6 +423,13 @@ Material* RendererD3D::SetMaterial(Material* material, const Matrix4x4& ltw)
     ld->Normalize();
     mDevice->SetPixelShaderConstantF(0, &lightDir.mX, 1);
 
+    return old;
+}
+
+Material* RendererD3D::SetSpriteMaterial(Material* material)
+{
+    Material* old = mSpriteMaterial;
+    mSpriteMaterial = material;
     return old;
 }
 
@@ -367,17 +460,41 @@ VertexBuffer* RendererD3D::SetVertexBuffer(uint index, VertexBuffer* vb)
 IndexBuffer* RendererD3D::SetIndexBuffer(IndexBuffer* ib)
 {
     IndexBuffer* existing = mCurrentIndexBuffer;
-    IndexBufferD3D9* ibd3d9 = (IndexBufferD3D9*)ib;
-    mDevice->SetIndices((IDirect3DIndexBuffer9*)ibd3d9->GetBuffer());
+    if( ib )
+    {
+        IndexBufferD3D9* ibd3d9 = (IndexBufferD3D9*)ib;
+        mDevice->SetIndices((IDirect3DIndexBuffer9*)ibd3d9->GetBuffer());
+    }
+    else
+        mDevice->SetIndices(0);
     mCurrentIndexBuffer = ib;
     return existing;
 }
 
-void RendererD3D::Draw(int primitiveCount, ePrimitiveType primitiveType)
+void RendererD3D::Draw(int vertexCount, int primitiveCount, ePrimitiveType primitiveType)
 {
+    if( mCurrentIndexBuffer )
+    {
+        mDevice->DrawIndexedPrimitive(sD3DPrimTypes[primitiveType], 0, 0, vertexCount, 0, primitiveCount);
+    }
+    else
+    {
+        mDevice->DrawPrimitive(sD3DPrimTypes[primitiveType], 0, primitiveCount);
+    }
 }
 
-void RendererD3D::DrawIndexed(int vertexCount, int primitiveCount, ePrimitiveType primitiveType)
+void RendererD3D::DrawSprites(Texture* texture, int numSprites)
 {
-    mDevice->DrawIndexedPrimitive(sD3DPrimTypes[primitiveType], 0, 0, vertexCount, 0, primitiveCount);
+    // Bind the sprite profile & material
+    VertexProfile* currentProfile = SetVertexProfile(mSpriteProfile);
+    Material* currentMaterial = SetMaterial(mSpriteMaterial);
+
+    // Bind the texture
+
+    // Draw the sprites
+    Draw(numSprites * 6, numSprites * 2, ePT_Triangles);
+
+    // Restore the old profile and material
+    SetVertexProfile(currentProfile);
+    SetMaterial(currentMaterial);
 }

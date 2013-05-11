@@ -13,6 +13,9 @@ class VertexProfile;
 class VertexShader;
 class PixelShader;
 class Material;
+class Texture;
+
+#include "DDS.h"
 
 class Renderer
 {
@@ -45,17 +48,19 @@ public:
 
     virtual VertexShader* CreateVertexShader(void* shaderData, uint shaderDataSize) = 0;
     virtual PixelShader* CreatePixelShader(void* shaderData, uint shaderDataSize) = 0;
-    virtual VertexProfile* CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers) = 0;
+    virtual VertexProfile* CreateVertexProfile(const VertexBuffer** vertexBuffers, int numVertexBuffers) = 0;
     virtual VertexBuffer* CreateVertexBuffer(int vertexCount, const VertexFormat& format, bool dynamic = false) = 0;
     virtual IndexBuffer* CreateIndexBuffer(int indexCount, bool sixteenBit = true) = 0;
+    virtual Texture* CreateTexture(DDS* textureFile, uint dataSize) = 0;
 
     virtual Material* SetMaterial(Material* material, const Matrix4x4& ltw) = 0;
+    virtual Material* SetSpriteMaterial(Material* material) = 0;
     virtual VertexProfile* SetVertexProfile(VertexProfile* profile) = 0;
     virtual VertexBuffer* SetVertexBuffer(uint index, VertexBuffer* vertexBuffer) = 0;
     virtual IndexBuffer* SetIndexBuffer(IndexBuffer* indexBuffer) = 0;
-    
-    virtual void Draw(int primitiveCount, ePrimitiveType primitiveType) = 0;    
-    virtual void DrawIndexed(int vertexCount, int primitiveCount, ePrimitiveType primitiveType) = 0;
+      
+    virtual void Draw(int vertexCount, int primitiveCount, ePrimitiveType primitiveType) = 0;
+    virtual void DrawSprites(Texture* texture, int numSprites) = 0;
 
     static int GetPrimitiveIndexCount(int primitiveCount, ePrimitiveType primitiveType);
 

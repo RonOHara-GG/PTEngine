@@ -1,6 +1,8 @@
 #ifndef _VECTOR3_H_
 #define _VECTOR3_H_
 
+class Matrix4x4;
+
 class Vector3
 {
 public:

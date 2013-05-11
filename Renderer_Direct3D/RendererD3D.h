@@ -32,17 +32,19 @@ public:
 
     virtual VertexShader* CreateVertexShader(void* shaderData, uint shaderDataSize);
     virtual PixelShader* CreatePixelShader(void* shaderData, uint shaderDataSize);
-    virtual VertexProfile* CreateVertexProfile(const DynamicArray<VertexBuffer*>& vertexBuffers);
+    virtual VertexProfile* CreateVertexProfile(const VertexBuffer** vertexBuffers, int numVertexBuffers);
     virtual VertexBuffer* CreateVertexBuffer(int vertexCount, const VertexFormat& vertexFormat, bool dynamic = false);
     virtual IndexBuffer* CreateIndexBuffer(int indexCount, bool sixteenBit = true);
+    virtual Texture* CreateTexture(DDS* textureFile, uint dataSize);
 
     virtual Material* SetMaterial(Material* material, const Matrix4x4& ltw);
+    virtual Material* SetSpriteMaterial(Material* material);
     virtual VertexProfile* SetVertexProfile(VertexProfile* profile);
     virtual VertexBuffer* SetVertexBuffer(uint index, VertexBuffer* vertexBuffer);
     virtual IndexBuffer* SetIndexBuffer(IndexBuffer* indexBuffer);
 
-    virtual void Draw(int primitiveCount, ePrimitiveType primitiveType);
-    virtual void DrawIndexed(int vertexCount, int primitiveCount, ePrimitiveType primitiveType);
+    virtual void Draw(int vertexCount, int primitiveCount, ePrimitiveType primitiveType);
+    virtual void DrawSprites(Texture* texture, int numSprites);
 
 private:
     ID3DXBuffer* CompileShader(void* shaderData, uint shaderDataSize, const char* entryPoint, const char* shaderProfile);
@@ -56,6 +58,7 @@ private:
     IndexBuffer*                mCurrentIndexBuffer;
     VertexProfile*              mCurrentVertexProfile;
     Material*                   mCurrentMaterial;
+    Material*                   mSpriteMaterial;
     
     const char*                 mVertexShaderProfile;
     const char*                 mPixelShaderProfile;

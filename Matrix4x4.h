@@ -15,6 +15,7 @@ public:
     void Transpose();
 
     void SetIdentity();
+    void SetOrthographic(float width, float height, float near, float far, bool leftHanded = false);
     void SetPerspective(float width, float height, float near, float far, bool leftHanded = false);
     void SetPerspectiveFov(float fovY, float aspectRatio, float near, float far, bool leftHanded = false);
     void SetLook(const Vector3& eyePosition, const Vector3& lookAt, const Vector3& upDirection, bool leftHanded = false);
@@ -92,6 +93,19 @@ inline void Matrix4x4::Transpose()
     SWAP(floats[6], floats[9], temp);
     SWAP(floats[7], floats[13], temp);
     SWAP(floats[11], floats[14], temp);
+}
+
+inline Vector4 Vector4::operator *(const Matrix4x4& m) const
+{
+        Matrix4x4 trans = m;
+        trans.Transpose();      
+
+        float fX = Dot(trans.mA);
+        float fY = Dot(trans.mB);
+        float fZ = Dot(trans.mC);
+        float fW = Dot(trans.mD);
+
+        return Vector4(fX, fY, fZ, fW);
 }
 
 #endif // _MATRIX4X4_H_

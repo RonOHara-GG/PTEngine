@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Box.h" />
+    <ClInclude Include="DDS.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="DynamicArray.h" />
     <ClInclude Include="DynamicLibrary.h" />
@@ -32,7 +33,9 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shapes.h" />
+    <ClInclude Include="SpriteTexture.h" />
     <ClInclude Include="Submesh.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector3_Default.h" />
     <ClInclude Include="Vector4.h" />
@@ -59,6 +62,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RGBA.cpp" />
     <ClCompile Include="Shapes.cpp" />
+    <ClCompile Include="SpriteTexture.cpp" />
     <ClCompile Include="Submesh.cpp" />
   </ItemGroup>
   <ItemGroup>
