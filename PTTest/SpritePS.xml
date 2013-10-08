@@ -1,0 +1,19 @@
+<PixelShader>
+  <PixelInput>
+    <Type>float2</Type>
+    <Usage>UV0</Usage>
+    <Name>InputUV</Name>
+  </PixelInput>
+
+  <Texture>
+    <Type>2D</Type>
+    <Name>InputTexture</Name>
+  </Texture>
+
+  <Operation>
+    <Type>TextureLookup</Type>
+    <A>InputTexture</A>
+    <B>InputUV</B>
+    <Output>OutputColor</Output>
+  </Operation>
+</PixelShader>

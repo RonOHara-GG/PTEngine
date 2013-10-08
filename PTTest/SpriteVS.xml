@@ -1,0 +1,42 @@
+<VertexShader>
+  <VertexInput>
+    <Type>float4</Type>
+    <Usage>Position</Usage>
+    <Name>InputPosition</Name>
+  </VertexInput>
+  <VertexInput>
+    <Type>float2</Type>
+    <Usage>UV0</Usage>
+    <Name>InputUV</Name>
+  </VertexInput>
+  
+  <UniformInput>
+    <Type>float4x4</Type>
+    <Name>WorldViewProjection</Name>
+  </UniformInput>
+
+  <VertexOutput>
+    <Type>float4</Type>
+    <Usage>Position</Usage>
+    <Name>OutputPosition</Name>
+  </VertexOutput>
+  <VertexOutput>
+    <Type>float2</Type>
+    <Usage>UV0</Usage>
+    <Name>OutputUV</Name>
+  </VertexOutput>
+
+  <Operation>
+    <Type>Multiply</Type>
+    <A>WorldViewProjection</A>
+    <B>InputPosition</B>
+    <Output>OutputPosition</Output>    
+  </Operation>
+
+  <Operation>
+    <Type>PassThrough</Type>
+    <A>InputUV</A>
+    <Output>OutputUV</Output>
+  </Operation>
+  
+</VertexShader>
