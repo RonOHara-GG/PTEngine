@@ -28,6 +28,13 @@ public:
         ePT_Lines
     };
 
+    enum eCullMode
+    {
+        eCM_None,
+        eCM_Clockwise,
+        eCM_CounterClockwise,
+    };
+
 public:
     virtual ~Renderer() {};
 
@@ -60,7 +67,10 @@ public:
     virtual IndexBuffer* SetIndexBuffer(IndexBuffer* indexBuffer) = 0;
       
     virtual void Draw(int vertexCount, int primitiveCount, ePrimitiveType primitiveType) = 0;
-    virtual void DrawSprites(Texture* texture, int numSprites) = 0;
+    virtual void DrawSprites(Texture* texture, int numSprites, VertexBuffer* vb) = 0;
+    
+    virtual void EnableDepthTest(bool enable = true) = 0;
+    virtual void SetCullMode(eCullMode cullMode) = 0;
 
     static int GetPrimitiveIndexCount(int primitiveCount, ePrimitiveType primitiveType);
 

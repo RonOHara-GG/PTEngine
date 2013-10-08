@@ -13,6 +13,8 @@ public:
     virtual int GetWidth()      { return (int)mDDSInfo.mWidth; }
     virtual int GetHeight()     { return (int)mDDSInfo.mHeight; }
 
+    IDirect3DTexture9*  GetTexture()    { return mTexture; }
+
 protected:
     IDirect3DTexture9*  mTexture;
     DDS                 mDDSInfo;

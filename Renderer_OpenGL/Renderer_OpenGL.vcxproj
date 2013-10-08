@@ -82,6 +82,8 @@
     <ClInclude Include="IndexBufferOGL.h" />
     <ClInclude Include="RendererOGL.h" />
     <ClInclude Include="ROGLPlugin.h" />
+    <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="TextureOGL.h" />
     <ClInclude Include="VertexBufferOGL.h" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +91,8 @@
     <ClCompile Include="RendererOGL.cpp" />
     <ClCompile Include="RendererOGL_Win.cpp" />
     <ClCompile Include="ROGLPlugin.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="TextureOGL.cpp" />
     <ClCompile Include="VertexBufferOGL.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

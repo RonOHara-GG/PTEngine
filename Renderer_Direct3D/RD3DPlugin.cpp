@@ -1,6 +1,6 @@
 #include "..\PTEngine.h"
-#include "RD3DPlugin.h"
 #include "RendererD3D.h"
+#include "RD3DPlugin.h"
 
 Memory* Memory::sInstance = 0;
 Assert* Assert::sInstance = 0;

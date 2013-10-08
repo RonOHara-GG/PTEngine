@@ -23,6 +23,7 @@ SpriteTexture* gSprites[2] = {0, 0};
 
 Matrix4x4 gOrthoMatrix;
 Matrix4x4 gPerspectiveMatrix;
+Matrix4x4 gCameraMatrix;
 
 void InitGame(HWND hWndTop, HWND hWndBottom)
 {
@@ -44,13 +45,12 @@ void InitGame(HWND hWndTop, HWND hWndBottom)
     viewport.mMin.Set(0, 0, nearz);
     viewport.mMax.Set(width, height, farz);
     
-    gOrthoMatrix.SetOrthographic(width, height, nearz, farz);
+    gOrthoMatrix.SetOrthographic(0, width, 0, height, -1.0f, 1.0f);
     gPerspectiveMatrix.SetPerspectiveFov(DEGREES_TO_RADIANS(45), width / height, nearz, farz);
-    
-    Matrix4x4 view;
-    view.SetLook(Vector3(0.0f, 2.0f, 5.0f), Vector3(0, 0, 0), Vector3(0.0f, 1.0f, 0.0f));
+    gCameraMatrix.SetLook(Vector3(0.0f, 2.0f, 5.0f), Vector3(0, 0, 0), Vector3(0.0f, 1.0f, 0.0f));
 
     File* textureFile = FILE_MANAGER->LoadFile("Sprite.dds");
+    ASSERT(textureFile);
    
     for( int i = 0; i < NUM_RENDERERS; i++ )
     {
@@ -60,7 +60,7 @@ void InitGame(HWND hWndTop, HWND hWndBottom)
             {
                 gRenderers[i]->SetViewport(viewport);
                 gRenderers[i]->SetProjectionMatrix(gPerspectiveMatrix);
-                gRenderers[i]->SetViewMatrix(view);
+                gRenderers[i]->SetViewMatrix(gCameraMatrix);
 
                 Material* cubeMaterial = new Material();
                 File* vertexShaderFile = FILE_MANAGER->LoadFile(gVSFiles[i]);
@@ -78,19 +78,22 @@ void InitGame(HWND hWndTop, HWND hWndBottom)
 
                 vertexShaderFile = FILE_MANAGER->LoadFile(gSpriteVSFiles[i]);
                 pixelShaderFile = FILE_MANAGER->LoadFile(gSpritePSFiles[i]);
-                vs = gRenderers[i]->CreateVertexShader(vertexShaderFile->GetData(), vertexShaderFile->GetSize());
-                ps = gRenderers[i]->CreatePixelShader(pixelShaderFile->GetData(), pixelShaderFile->GetSize());
-                Material* spriteMaterial = new Material();
-                spriteMaterial->SetVertexShader(vs);
-                spriteMaterial->SetPixelShader(ps);
-                gRenderers[i]->SetSpriteMaterial(spriteMaterial);
+                if( vertexShaderFile && pixelShaderFile )
+                {
+                    vs = gRenderers[i]->CreateVertexShader(vertexShaderFile->GetData(), vertexShaderFile->GetSize());
+                    ps = gRenderers[i]->CreatePixelShader(pixelShaderFile->GetData(), pixelShaderFile->GetSize());
+                    Material* spriteMaterial = new Material();
+                    spriteMaterial->SetVertexShader(vs);
+                    spriteMaterial->SetPixelShader(ps);
+                    gRenderers[i]->SetSpriteMaterial(spriteMaterial);
+                }
 
-                delete vertexShaderFile;
-                delete pixelShaderFile;	
+                if( vertexShaderFile ) delete vertexShaderFile;
+                if( pixelShaderFile ) delete pixelShaderFile;	
                 
                 Texture* texture = gRenderers[i]->CreateTexture((DDS*)textureFile->GetData(), textureFile->GetSize());
                 gSprites[i] = new SpriteTexture(texture);
-                gSprites[i]->AddSprite(0, 100, width, 10);
+                gSprites[i]->AddSprite(0, 178, width, 100);
                 gSprites[i]->Finish(gRenderers[i]);
                 
             }
@@ -111,11 +114,30 @@ void ShutdownGame()
     }
 }
 
+void Setup3D(Renderer* renderer)
+{
+    renderer->SetProjectionMatrix(gPerspectiveMatrix);
+    renderer->SetViewMatrix(gCameraMatrix);
+
+    renderer->EnableDepthTest(true);
+    renderer->SetCullMode(Renderer::eCM_Clockwise);
+}
+
+void Setup2D(Renderer* renderer)
+{
+    Matrix4x4 ident;
+    renderer->SetViewMatrix(ident);
+    renderer->SetProjectionMatrix(gOrthoMatrix);
+
+    renderer->EnableDepthTest(false);
+    renderer->SetCullMode(Renderer::eCM_None);
+}
+
+static float cubeRotation = 0.0f;
 void DoFrame()
 {
     Matrix4x4 localToWorld;
-    static float index = 0.0f; index+=0.025f;
-    localToWorld.SetRotationY(index);
+    localToWorld.SetRotationY(cubeRotation);
 
     for( int i = 0; i < NUM_RENDERERS; i++ )
     {
@@ -127,17 +149,52 @@ void DoFrame()
             gRenderers[i]->BeginFrame();
             
             // Draw Cube
-            gRenderers[i]->SetProjectionMatrix(gPerspectiveMatrix);
+            Setup3D(gRenderers[i]);
             if( gCubes[i] )
             {
                 gCubes[i]->Draw(localToWorld);
             }
 
-            // Draw lines
-            gRenderers[i]->SetProjectionMatrix(gOrthoMatrix);
+            // Draw Sprites
+            Setup2D(gRenderers[i]);
+            if( gSprites[i] )
+            {
+                gSprites[i]->Draw(gRenderers[i]);
+            }
             
             gRenderers[i]->EndFrame();
             gRenderers[i]->FinishFrame();
         }
+    }
+}
+
+int spriteTop = 178;
+void RebuildSprites()
+{
+    for( int i = 0; i < NUM_RENDERERS; i++ )
+    {
+        gSprites[i]->AddSprite(0, spriteTop, 853, 100);
+        gSprites[i]->Finish(gRenderers[i]);
+    }
+}
+
+void KeyUp(int key)
+{
+    switch( key )
+    {
+        case VK_UP:
+            spriteTop--;
+            RebuildSprites();
+            break;
+        case VK_DOWN:
+            spriteTop++;
+            RebuildSprites();
+            break;
+        case VK_LEFT:
+            cubeRotation -= 0.025f;
+            break;
+        case VK_RIGHT:
+            cubeRotation += 0.025f;
+            break;
     }
 }

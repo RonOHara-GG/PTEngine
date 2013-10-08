@@ -976,4 +976,77 @@ typedef unsigned int GLhandleARB;
 #define GL_OBJECT_SHADER_SOURCE_LENGTH_ARB      0x8B88
 
 
+#define GL_ALPHA4_EXT                           0x803B
+#define GL_ALPHA8_EXT                           0x803C
+#define GL_ALPHA12_EXT                          0x803D
+#define GL_ALPHA16_EXT                          0x803E
+#define GL_LUMINANCE4_EXT                       0x803F
+#define GL_LUMINANCE8_EXT                       0x8040
+#define GL_LUMINANCE12_EXT                      0x8041
+#define GL_LUMINANCE16_EXT                      0x8042
+#define GL_LUMINANCE4_ALPHA4_EXT                0x8043
+#define GL_LUMINANCE6_ALPHA2_EXT                0x8044
+#define GL_LUMINANCE8_ALPHA8_EXT                0x8045
+#define GL_LUMINANCE12_ALPHA4_EXT               0x8046
+#define GL_LUMINANCE12_ALPHA12_EXT              0x8047
+#define GL_LUMINANCE16_ALPHA16_EXT              0x8048
+#define GL_INTENSITY_EXT                        0x8049
+#define GL_INTENSITY4_EXT                       0x804A
+#define GL_INTENSITY8_EXT                       0x804B
+#define GL_INTENSITY12_EXT                      0x804C
+#define GL_INTENSITY16_EXT                      0x804D
+#define GL_RGB2_EXT                             0x804E
+#define GL_RGB4_EXT                             0x804F
+#define GL_RGB5_EXT                             0x8050
+#define GL_RGB8_EXT                             0x8051
+#define GL_RGB10_EXT                            0x8052
+#define GL_RGB12_EXT                            0x8053
+#define GL_RGB16_EXT                            0x8054
+#define GL_RGBA2_EXT                            0x8055
+#define GL_RGBA4_EXT                            0x8056
+#define GL_RGB5_A1_EXT                          0x8057
+#define GL_RGBA8_EXT                            0x8058
+#define GL_RGB10_A2_EXT                         0x8059
+#define GL_RGBA12_EXT                           0x805A
+#define GL_RGBA16_EXT                           0x805B
+#define GL_TEXTURE_RED_SIZE_EXT                 0x805C
+#define GL_TEXTURE_GREEN_SIZE_EXT               0x805D
+#define GL_TEXTURE_BLUE_SIZE_EXT                0x805E
+#define GL_TEXTURE_ALPHA_SIZE_EXT               0x805F
+#define GL_TEXTURE_LUMINANCE_SIZE_EXT           0x8060
+#define GL_TEXTURE_INTENSITY_SIZE_EXT           0x8061
+#define GL_REPLACE_EXT                          0x8062
+#define GL_PROXY_TEXTURE_1D_EXT                 0x8063
+#define GL_PROXY_TEXTURE_2D_EXT                 0x8064
+
+#define GL_PACK_SKIP_IMAGES_EXT                 0x806B
+#define GL_PACK_IMAGE_HEIGHT_EXT                0x806C
+#define GL_UNPACK_SKIP_IMAGES_EXT               0x806D
+#define GL_UNPACK_IMAGE_HEIGHT_EXT              0x806E
+#define GL_TEXTURE_3D_EXT                       0x806F
+#define GL_PROXY_TEXTURE_3D_EXT                 0x8070
+#define GL_TEXTURE_DEPTH_EXT                    0x8071
+#define GL_TEXTURE_WRAP_R_EXT                   0x8072
+#define GL_MAX_3D_TEXTURE_SIZE_EXT              0x8073
+
+#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT         0x83F0
+#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT        0x83F1
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT        0x83F2
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT        0x83F3
+
+#define GL_NORMAL_MAP_EXT                       0x8511
+#define GL_REFLECTION_MAP_EXT                   0x8512
+#define GL_TEXTURE_CUBE_MAP_EXT                 0x8513
+#define GL_TEXTURE_BINDING_CUBE_MAP_EXT         0x8514
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT      0x8515
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_X_EXT      0x8516
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Y_EXT      0x8517
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_EXT      0x8518
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Z_EXT      0x8519
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_EXT      0x851A
+#define GL_PROXY_TEXTURE_CUBE_MAP_EXT           0x851B
+#define GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT        0x851C
+
+
+
 #endif // _GL_DEFINES_H_

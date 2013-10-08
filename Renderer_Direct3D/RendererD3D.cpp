@@ -22,6 +22,7 @@ RendererD3D::RendererD3D(void)
     mCurrentVertexBuffers = 0;
     mCurrentMaterial = 0;
     mSpriteMaterial = 0;
+    mSpriteProfile = 0;
 }
 
 
@@ -31,6 +32,11 @@ RendererD3D::~RendererD3D(void)
     {
         free(mCurrentVertexBuffers);
         mCurrentVertexBuffers = 0;
+    }
+    if( mSpriteProfile )
+    {
+        delete mSpriteProfile;
+        mSpriteProfile = 0;
     }
 }
 
@@ -62,6 +68,8 @@ bool RendererD3D::Init(void* window, int width, int height, bool fullScreen)
 
     mDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
     //mDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_EQUAL);
+
+    CreateSpriteProfile();
 
     return true;
 }
@@ -189,6 +197,27 @@ PixelShader* RendererD3D::CreatePixelShader(void* shaderData, uint shaderDataSiz
     }
 
     return shader;
+}
+
+void RendererD3D::CreateSpriteProfile()
+{
+    if( mSpriteProfile )
+    {
+        delete mSpriteProfile;
+        mSpriteProfile = 0;
+    }
+
+    D3DVERTEXELEMENT9 elements[] = {   
+        {0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+        {0, 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+        D3DDECL_END() };
+
+    IDirect3DVertexDeclaration9* decl = 0;
+    HRESULT res = mDevice->CreateVertexDeclaration(elements, &decl);
+    if( res == D3D_OK )
+    {
+        mSpriteProfile = new VertexProfileD3D(decl);
+    }
 }
 
 VertexProfile* RendererD3D::CreateVertexProfile(const VertexBuffer** vertexBuffers, int numVertexBuffers)
@@ -320,7 +349,7 @@ IndexBuffer* RendererD3D::CreateIndexBuffer(int indexCount, bool sixteenBit)
 }
 
 Texture* RendererD3D::CreateTexture(DDS* dds, uint dataSize)
-{
+{                 
     /*
     D3DFORMAT format = D3DFMT_UNKNOWN;
     if( dds->HasFourCC() )
@@ -408,20 +437,23 @@ Material* RendererD3D::SetMaterial(Material* material, const Matrix4x4& ltw)
     Material* old = mCurrentMaterial;
     mCurrentMaterial = material;
 
-    VertexShaderD3D9* vs = (VertexShaderD3D9*)material->GetVertexShader();
-    mDevice->SetVertexShader(vs->GetShader());
+    if( material )
+    {
+        VertexShaderD3D9* vs = (VertexShaderD3D9*)material->GetVertexShader();
+        mDevice->SetVertexShader(vs ? vs->GetShader() : 0);
 
-    Matrix4x4 wvp = ltw * mViewProjectionMatrix;
-    mDevice->SetVertexShaderConstantF(0, wvp, 4);
-    mDevice->SetVertexShaderConstantF(4, ltw, 4);
+        Matrix4x4 wvp = ltw * mViewProjectionMatrix;
+        mDevice->SetVertexShaderConstantF(0, wvp, 4);
+        mDevice->SetVertexShaderConstantF(4, ltw, 4);
 
-    PixelShaderD3D9* ps = (PixelShaderD3D9*)material->GetPixelShader();
-    mDevice->SetPixelShader(ps->GetShader());
+        PixelShaderD3D9* ps = (PixelShaderD3D9*)material->GetPixelShader();
+        mDevice->SetPixelShader(ps ? ps->GetShader() : 0);
 
-    Vector4 lightDir(1, 1, 0);
-    Vector3* ld = (Vector3*)&lightDir;
-    ld->Normalize();
-    mDevice->SetPixelShaderConstantF(0, &lightDir.mX, 1);
+        Vector4 lightDir(1, 1, 0);
+        Vector3* ld = (Vector3*)&lightDir;
+        ld->Normalize();
+        mDevice->SetPixelShaderConstantF(0, &lightDir.mX, 1);
+    }
 
     return old;
 }
@@ -438,8 +470,13 @@ VertexProfile* RendererD3D::SetVertexProfile(VertexProfile* profile)
     VertexProfile* existing = mCurrentVertexProfile;
     mCurrentVertexProfile = profile;
 
-    VertexProfileD3D* d3dProfile = (VertexProfileD3D*)profile;
-    mDevice->SetVertexDeclaration(d3dProfile->GetDeclaration());
+    if( profile )
+    {
+        VertexProfileD3D* d3dProfile = (VertexProfileD3D*)profile;
+        mDevice->SetVertexDeclaration(d3dProfile->GetDeclaration());
+    }
+    else
+        mDevice->SetVertexDeclaration(0);
 
     return existing;
 }
@@ -483,18 +520,45 @@ void RendererD3D::Draw(int vertexCount, int primitiveCount, ePrimitiveType primi
     }
 }
 
-void RendererD3D::DrawSprites(Texture* texture, int numSprites)
-{
+void RendererD3D::DrawSprites(Texture* texture, int numSprites, VertexBuffer* vb)
+{    
     // Bind the sprite profile & material
+    Matrix4x4 ltw;
     VertexProfile* currentProfile = SetVertexProfile(mSpriteProfile);
-    Material* currentMaterial = SetMaterial(mSpriteMaterial);
+    Material* currentMaterial = SetMaterial(mSpriteMaterial, ltw);
+    VertexBuffer* currentVB = SetVertexBuffer(0, vb);
+    IndexBuffer* currentIB = SetIndexBuffer(0);
 
     // Bind the texture
-
+    TextureD3D9* d3d9Tex = (TextureD3D9*)texture;
+    mDevice->SetTexture(0, d3d9Tex->GetTexture());
+    
     // Draw the sprites
     Draw(numSprites * 6, numSprites * 2, ePT_Triangles);
 
     // Restore the old profile and material
+    SetVertexBuffer(0, currentVB);
+    SetIndexBuffer(currentIB);
     SetVertexProfile(currentProfile);
-    SetMaterial(currentMaterial);
+    SetMaterial(currentMaterial, ltw);    
+}
+
+void RendererD3D::EnableDepthTest(bool enable)
+{    
+    mDevice->SetRenderState(D3DRS_ZENABLE, enable ? TRUE : FALSE);
+}
+
+void RendererD3D::SetCullMode(eCullMode cullMode)
+{
+    DWORD cm = D3DCULL_NONE;
+    switch( cullMode )
+    {
+        case eCM_Clockwise:
+            cm = D3DCULL_CW;
+            break;
+        case eCM_CounterClockwise:
+            cm = D3DCULL_CCW;
+            break;
+    }
+    mDevice->SetRenderState(D3DRS_CULLMODE, cm);
 }

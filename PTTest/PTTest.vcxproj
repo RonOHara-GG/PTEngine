@@ -80,6 +80,10 @@
     <None Include="PTTest.ico" />
     <None Include="ReadMe.txt" />
     <None Include="small.ico" />
+    <None Include="SpritePS.glsl" />
+    <None Include="SpritePS.hlsl" />
+    <None Include="SpriteVS.glsl" />
+    <None Include="SpriteVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PTTest.h" />

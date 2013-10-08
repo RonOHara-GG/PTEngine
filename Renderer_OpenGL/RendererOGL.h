@@ -41,7 +41,10 @@ public:
     virtual IndexBuffer* SetIndexBuffer(IndexBuffer* indexBuffer);
 
     virtual void Draw(int vertexCount, int primitiveCount, ePrimitiveType primitiveType);
-    virtual void DrawSprites(Texture* texture, int numSprites);
+    virtual void DrawSprites(Texture* texture, int numSprites, VertexBuffer* vb);
+
+    virtual void EnableDepthTest(bool enable = true);
+    virtual void SetCullMode(eCullMode cullMode);
 
 private:
     bool PlatformInit(void* window, int width, int height, bool fullScreen);
@@ -53,6 +56,7 @@ private:
 private:
     IndexBufferOGL*             mCurrentIndexBuffer;
     Material*                   mCurrentMaterial;
+    Material*                   mSpriteMaterial;
     Box                         mCurrentViewport;
 
     Matrix4x4                   mViewMatrix;

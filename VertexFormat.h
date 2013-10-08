@@ -10,6 +10,8 @@ public:
         eVU_Normal,
         eVU_Color,
         eVU_UV0,
+
+        eVU_Last
     };
     enum VertexElementType
     {

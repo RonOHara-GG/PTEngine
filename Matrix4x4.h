@@ -15,7 +15,7 @@ public:
     void Transpose();
 
     void SetIdentity();
-    void SetOrthographic(float width, float height, float near, float far, bool leftHanded = false);
+    void SetOrthographic(float left, float right, float top, float bottom, float near, float far, bool leftHanded = false);
     void SetPerspective(float width, float height, float near, float far, bool leftHanded = false);
     void SetPerspectiveFov(float fovY, float aspectRatio, float near, float far, bool leftHanded = false);
     void SetLook(const Vector3& eyePosition, const Vector3& lookAt, const Vector3& upDirection, bool leftHanded = false);

@@ -3,6 +3,8 @@
 #include "RendererOGL.h"
 #include "VertexBufferOGL.h"
 #include "IndexBufferOGL.h"
+#include "TextureOGL.h"
+#include "ShaderProgram.h"
 
 #define ATTRIB_POSITION     0
 #define ATTRIB_NORMAL       1
@@ -15,6 +17,7 @@ RendererOGL::RendererOGL(void)
 {
     mCurrentIndexBuffer = 0;
     mCurrentMaterial = 0;
+    mSpriteMaterial = 0;
 }
 
 RendererOGL::~RendererOGL(void)
@@ -156,53 +159,74 @@ IndexBuffer* RendererOGL::CreateIndexBuffer(int indexCount, bool sixteenBit)
 
 Texture* RendererOGL::CreateTexture(DDS* textureFile, uint dataSize)
 {
-    return 0;
+    TextureOGL* tex = new TextureOGL();
+    if( !tex->Init(textureFile) )
+    {
+        delete tex;
+        tex = 0;
+    }
+
+    return tex;
 }
 
 Material* RendererOGL::SetMaterial(Material* material, const Matrix4x4& ltw)
 {
     Material* old = mCurrentMaterial;
-    mCurrentMaterial = material;
+
+    if( old )
+    {
+        ShaderProgram* oldProgram = (ShaderProgram*)old->GetProgram();
+        if( oldProgram )
+        {
+            oldProgram->UnBind();
+        }
+    }
 
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(ltw);
 
-    Matrix4x4 wvp = ltw * mViewProjectionMatrix;
-
-    void* program = material->GetProgram();
-    if( !program )
+    Matrix4x4 wvp = ltw * mViewProjectionMatrix;    
+    
+    if( material )
     {
-        GLhandleARB prg = glCreateProgramObjectARB();
-        glAttachObjectARB(prg, (GLhandleARB)material->GetVertexShader());
-        glAttachObjectARB(prg, (GLhandleARB)material->GetPixelShader());
-        glLinkProgramARB(prg);
-        program = (void*)prg;
-        material->SetProgram(program);
+        ShaderProgram* program = (ShaderProgram*)material->GetProgram();
+        if( !program )
+        {
+            program = new ShaderProgram();
+            program->Init(material->GetVertexShader(), material->GetPixelShader());
+            material->SetProgram(program);
+        }
+        program->Bind();
+
+        program->SetWVP(wvp);
+        program->SetNormalMatrix(ltw);
+
+        Vector3 lightDir(1, 1, 0);
+        lightDir.Normalize();
+        int loc = glGetUniformLocation(program->GetGLProgram(), "lightDir");
+        if( loc >= 0 )
+            glUniform3f(loc, lightDir.mX, lightDir.mY, lightDir.mZ);
+
+        loc = glGetUniformLocation(program->GetGLProgram(), "textureSampler");
+        if( loc >= 0 )
+            glUniform1i(loc, 0);
     }
-    glUseProgramObjectARB((GLhandleARB)program);
 
-    GLint loc = glGetUniformLocation((GLint)program, "WorldViewProjection");
-    glUniformMatrix4fv(loc, 1, false, wvp);
-
-    loc = glGetUniformLocation((GLint)program, "normalMatrix");
-    float normalMatrix[9] = {ltw.mA.mX, ltw.mA.mY, ltw.mA.mZ,
-                             ltw.mB.mX, ltw.mB.mY, ltw.mB.mZ,
-                             ltw.mC.mX, ltw.mC.mY, ltw.mC.mZ};
-    glUniformMatrix3fv(loc, 1, false, normalMatrix);
-
-
-    Vector3 lightDir(1, 1, 0);
-    lightDir.Normalize();
-    loc = glGetUniformLocation((GLint)program, "lightDir");
-    glUniform3f(loc, lightDir.mX, lightDir.mY, lightDir.mZ);
-
-
+    mCurrentMaterial = material;
     return old;
 }
 
 Material* RendererOGL::SetSpriteMaterial(Material* material)
 {
-    return 0;
+    Material* old = mSpriteMaterial;
+    mSpriteMaterial = material;
+
+    Material* current = mCurrentMaterial;
+    Matrix4x4 ltw;
+    SetMaterial(mSpriteMaterial, ltw);
+    SetMaterial(current, ltw);
+
+    return old;
 }
 
 VertexProfile* RendererOGL::SetVertexProfile(VertexProfile* profile)
@@ -218,7 +242,7 @@ VertexBuffer* RendererOGL::SetVertexBuffer(uint index, VertexBuffer* vertexBuffe
     if( vb )
         bufferName = vb->GetBufferName();
     sVB = vb;
-    
+        
     glBindBuffer(GL_ARRAY_BUFFER, bufferName);
     if( vb )
     {
@@ -227,21 +251,9 @@ VertexBuffer* RendererOGL::SetVertexBuffer(uint index, VertexBuffer* vertexBuffe
         for( int i = 0; i < format.GetElementCount(); i++ )
         {
             const VertexFormat::VertexElement& element = format.GetElement(i);
-            GLint location = -1;
-            switch( element.mUsage )
-            {
-                case VertexFormat::eVU_Position:
-                    location = glGetAttribLocation((GLuint)mCurrentMaterial->GetProgram(), "InPosition");;
-                    break;
-                case VertexFormat::eVU_Normal:
-                    location = glGetAttribLocation((GLuint)mCurrentMaterial->GetProgram(), "InNormal");
-                    break;
-            }
-            if( location >= 0 )
-            {
-                glEnableVertexAttribArray(location);
-                glVertexAttribPointer(location, VertexFormat::GetDataSizeOfType(element.mType) / 4, GL_FLOAT, GL_FALSE, format.GetSize(), (const GLvoid*)offset);   
-            }
+            GLint location = element.mUsage;
+            glEnableVertexAttribArray(location);
+            glVertexAttribPointer(location, VertexFormat::GetDataSizeOfType(element.mType) / 4, GL_FLOAT, GL_FALSE, format.GetSize(), (const GLvoid*)offset);
             offset += VertexFormat::GetDataSizeOfType(element.mType);
         }
     }
@@ -270,9 +282,50 @@ void RendererOGL::Draw(int vertexCount, int primitiveCount, ePrimitiveType primi
     }
     else
     {
+        glDrawArrays(sOGLPrimTypes[primitiveType], 0, vertexCount);
     }
 }
 
-void RendererOGL::DrawSprites(Texture* texture, int numSprites)
+void RendererOGL::DrawSprites(Texture* texture, int numSprites, VertexBuffer* vb)
 {
+    // Bind the sprite material
+    Matrix4x4 ltw;
+    Material* currentMaterial = SetMaterial(mSpriteMaterial, ltw);
+
+    // Bind the vertex buffer
+    VertexBuffer* currentVB = SetVertexBuffer(0, vb);
+
+    // Clear the index buffer
+    IndexBuffer* currentIB = SetIndexBuffer(0);
+
+    // Bind the texture
+    TextureOGL* oglTex = (TextureOGL*)texture;
+    oglTex->Bind();
+    
+    // Draw the sprites
+    Draw(numSprites * 6, numSprites * 2, ePT_Triangles);
+
+    // Restore the old material
+    SetVertexBuffer(0, currentVB);
+    SetIndexBuffer(currentIB);
+    SetMaterial(currentMaterial, ltw);
+}
+
+void RendererOGL::EnableDepthTest(bool enable)
+{
+    if( enable )
+        glEnable(GL_DEPTH);
+    else
+        glDisable(GL_DEPTH);
+}
+
+void RendererOGL::SetCullMode(eCullMode cullMode)
+{    
+    if( cullMode == eCM_None )
+        glDisable(GL_CULL_FACE);
+    else
+    {
+        glEnable(GL_CULL_FACE);
+        glCullFace(cullMode == eCM_Clockwise ? GL_CW : GL_CCW);
+    }
 }

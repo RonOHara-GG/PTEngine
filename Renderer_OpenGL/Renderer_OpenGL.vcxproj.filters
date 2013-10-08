@@ -10,6 +10,8 @@
     <ClInclude Include="glCoreFunctions.h" />
     <ClInclude Include="glDefines.h" />
     <ClInclude Include="glExtFunctions.h" />
+    <ClInclude Include="TextureOGL.h" />
+    <ClInclude Include="ShaderProgram.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ROGLPlugin.cpp" />
@@ -17,5 +19,7 @@
     <ClCompile Include="VertexBufferOGL.cpp" />
     <ClCompile Include="IndexBufferOGL.cpp" />
     <ClCompile Include="RendererOGL_Win.cpp" />
+    <ClCompile Include="TextureOGL.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
   </ItemGroup>
 </Project>

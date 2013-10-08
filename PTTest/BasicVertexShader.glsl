@@ -1,13 +1,16 @@
-uniform mat4 WorldViewProjection;
-uniform mat3 normalMatrix;
+layout(location = 0) in vec4 InPosition;
+layout(location = 1) in vec3 InNormal;
+layout(location = 3) in vec2 InUV0;
 
-attribute vec4 InPosition;
-attribute vec3 InNormal;
+uniform mat4 WorldViewProjection;
+uniform mat3 NormalMatrix;
 
 varying vec3 worldNormal;
+varying vec2 texCoord;
 
 void main()
 {
 	gl_Position = WorldViewProjection * InPosition;
-	worldNormal = normalMatrix * InNormal;
+	worldNormal = NormalMatrix * InNormal;
+	texCoord = InUV0;
 }

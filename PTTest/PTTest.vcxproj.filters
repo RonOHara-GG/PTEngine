@@ -26,6 +26,10 @@
     <None Include="BasicPixelShader.hlsl" />
     <None Include="BasicPixelShader.glsl" />
     <None Include="BasicVertexShader.glsl" />
+    <None Include="SpriteVS.hlsl" />
+    <None Include="SpritePS.hlsl" />
+    <None Include="SpritePS.glsl" />
+    <None Include="SpriteVS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

@@ -8,6 +8,7 @@
 extern void InitGame(HWND hWndTop, HWND hWndBottom);
 extern void ShutdownGame();
 extern void DoFrame();
+extern void KeyUp(int key);
 
 // Global Variables:
 HINSTANCE hInst;								// current instance
@@ -152,6 +153,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+    case WM_KEYUP:
+        KeyUp(wParam);
+        break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}

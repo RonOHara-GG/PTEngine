@@ -5,15 +5,15 @@
 #undef free
 #include <math.h>
 
-void Matrix4x4::SetOrthographic(float width, float height, float near, float far, bool leftHanded)
+void Matrix4x4::SetOrthographic(float left, float right, float top, float bottom, float near, float far, bool leftHanded)
 {
-    mA.Set(2 / width, 0, 0, 0);
-    mB.Set(0, 2 / height, 0, 0);
+    mA.Set(2 / (right - left), 0, 0, 0);
+    mB.Set(0, 2 / (top - bottom), 0, 0);
     if( leftHanded )
         mC.Set(0, 0, 1 / (far - near), 0);
     else
         mC.Set(0, 0, 1 / (near - far), 0);
-    mD.Set(0, 0, near / (near - far), 1);
+    mD.Set((left + right) / (left - right), (top + bottom) / (bottom - top), near / (near - far), 1);
 }
 
 void Matrix4x4::SetPerspective(float width, float height, float near, float far, bool leftHanded)

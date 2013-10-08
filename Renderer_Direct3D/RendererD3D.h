@@ -1,13 +1,13 @@
 #ifndef _RENDERER_D3D_H_
 #define _RENDERER_D3D_H_
 
-#include "..\Renderer.h"
 #undef malloc
 #undef free
 
 #include <Windows.h>
 #include <d3d9.h>
 #include <D3DX9Shader.h>
+#include "..\Renderer.h"
 
 class RendererD3D : Renderer
 {
@@ -44,11 +44,15 @@ public:
     virtual IndexBuffer* SetIndexBuffer(IndexBuffer* indexBuffer);
 
     virtual void Draw(int vertexCount, int primitiveCount, ePrimitiveType primitiveType);
-    virtual void DrawSprites(Texture* texture, int numSprites);
+    virtual void DrawSprites(Texture* texture, int numSprites, VertexBuffer* vb);
+
+    virtual void EnableDepthTest(bool enable = true);
+    virtual void SetCullMode(eCullMode cullMode);
 
 private:
     ID3DXBuffer* CompileShader(void* shaderData, uint shaderDataSize, const char* entryPoint, const char* shaderProfile);
     void UpdateViewProjection();
+    void CreateSpriteProfile();
     
 private:
     IDirect3DDevice9*           mDevice;
@@ -59,6 +63,7 @@ private:
     VertexProfile*              mCurrentVertexProfile;
     Material*                   mCurrentMaterial;
     Material*                   mSpriteMaterial;
+    VertexProfile*              mSpriteProfile;
     
     const char*                 mVertexShaderProfile;
     const char*                 mPixelShaderProfile;

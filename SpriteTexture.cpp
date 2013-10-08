@@ -58,45 +58,53 @@ void SpriteTexture::Finish(Renderer* renderer)
     int positionOffset = format.Add(VertexFormat::eVU_Position, VertexFormat::eVET_Float3);
     int uvOffset = format.Add(VertexFormat::eVU_UV0, VertexFormat::eVET_Float2);
     mVertexBuffer = renderer->CreateVertexBuffer(mSprites->Count() * 6, format);
-
-    mVertexBuffer->Lock();
-    int vertex = 0;
-    mNumSprites = mSprites->Count();
-    for( int i = 0; i < mSprites->Count(); i++ )
+    if( mVertexBuffer )
     {
-        const Sprite& sprite = mSprites->Get(i);
+        mVertexBuffer->Lock();
+        int vertex = 0;
+        mNumSprites = mSprites->Count();
+        for( int i = 0; i < mSprites->Count(); i++ )
+        {
+            const Sprite& sprite = mSprites->Get(i);
 
-        Vector3 topLeft(sprite.x, sprite.y, sprite.z);
-        Vector3 topRight(sprite.x + sprite.width, sprite.y, sprite.z);
-        Vector3 bottomRight(sprite.x + sprite.width, sprite.y + sprite.height, sprite.z);
-        Vector3 bottomLeft(sprite.x, sprite.y + sprite.height, sprite.z);
+            Vector3 topLeft(sprite.x, sprite.y, sprite.z);
+            Vector3 topRight(sprite.x + sprite.width, sprite.y, sprite.z);
+            Vector3 bottomRight(sprite.x + sprite.width, sprite.y + sprite.height, sprite.z);
+            Vector3 bottomLeft(sprite.x, sprite.y + sprite.height, sprite.z);
 
-        Vector3 uvTopLeft(sprite.u, sprite.v, 0.0f);
-        Vector3 uvTopRight(sprite.s, sprite.v, 0.0f);
-        Vector3 uvBotRight(sprite.s, sprite.t, 0.0f);
-        Vector3 uvBotLeft(sprite.u, sprite.t, 0.0f);
-
-        mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &topLeft);
-        mVertexBuffer->SetVertexElement(vertex++, uvOffset, 8, &uvTopLeft);
-
-        mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &topRight);
-        mVertexBuffer->SetVertexElement(vertex++, uvOffset, 8, &uvTopRight);
-
-        mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &bottomLeft);
-        mVertexBuffer->SetVertexElement(vertex++, uvOffset, 8, &uvBotLeft);
+            Vector3 uvTopLeft(sprite.u, sprite.v, 0.0f);
+            Vector3 uvTopRight(sprite.s, sprite.v, 0.0f);
+            Vector3 uvBotRight(sprite.s, sprite.t, 0.0f);
+            Vector3 uvBotLeft(sprite.u, sprite.t, 0.0f);
         
-        mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &bottomLeft);
-        mVertexBuffer->SetVertexElement(vertex++, uvOffset, 8, &uvBotLeft);
+            mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &topLeft);
+            mVertexBuffer->SetVertexElement(vertex, uvOffset, 8, &uvTopLeft);
+            vertex++;
 
-        mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &topRight);
-        mVertexBuffer->SetVertexElement(vertex++, uvOffset, 8, &uvTopRight);
+            mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &topRight);
+            mVertexBuffer->SetVertexElement(vertex, uvOffset, 8, &uvTopRight);
+            vertex++;
 
-        mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &bottomRight);
-        mVertexBuffer->SetVertexElement(vertex++, uvOffset, 8, &uvBotRight);
+            mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &bottomLeft);
+            mVertexBuffer->SetVertexElement(vertex, uvOffset, 8, &uvBotLeft);
+            vertex++;
+        
+            mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &bottomLeft);
+            mVertexBuffer->SetVertexElement(vertex, uvOffset, 8, &uvBotLeft);
+            vertex++;
+
+            mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &topRight);
+            mVertexBuffer->SetVertexElement(vertex, uvOffset, 8, &uvTopRight);
+            vertex++;
+
+            mVertexBuffer->SetVertexElement(vertex, positionOffset, sizeof(Vector3), &bottomRight);
+            mVertexBuffer->SetVertexElement(vertex, uvOffset, 8, &uvBotRight);
+            vertex++;
+        }
+        delete mSprites;
+        mSprites = 0;
+        mVertexBuffer->Unlock();
     }
-    delete mSprites;
-    mSprites = 0;
-    mVertexBuffer->Unlock();
 }
 
 void SpriteTexture::Draw(Renderer* renderer)
@@ -106,12 +114,8 @@ void SpriteTexture::Draw(Renderer* renderer)
         Finish(renderer);
 
     if( mNumSprites && mVertexBuffer )
-    {
-        // Bind the vertex buffer
-        renderer->SetVertexBuffer(0, mVertexBuffer);
-        renderer->SetIndexBuffer(0);
-        
+    {        
         // Draw
-        renderer->DrawSprites(mTexture, mNumSprites);
+        renderer->DrawSprites(mTexture, mNumSprites, mVertexBuffer);
     }
 }
